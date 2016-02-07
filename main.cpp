@@ -34,8 +34,8 @@ Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
 
-int width = 400;
-int height = 400;
+int width = 1600;
+int height = 1600;
 
 void InitCamera() {
 	LightPos = Eigen::Vector3f(-1, 1, 1.5);
@@ -137,6 +137,7 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			//cout << "Hit ray: (" << hitPt (0) << ", " << hitPt (1) << ", " << hitPt (0) << ")" << endl;
 			//cout << "shadow ray: (" << shadowHit (0) << ", " << shadowHit (1) << ", " << shadowHit (0) << ")" << endl;
 
+			// makes sure we are not shadowing ourselves
 			if (abs(shadowHit(0) - hitPt(0)) < .1 && abs(shadowHit(1) - hitPt(1)) < .1 && abs(shadowHit(2) - hitPt(2)) < .1) {
 				isShadow = false;
 			}
@@ -218,16 +219,8 @@ void PrintPicture() {
 
 int main(int argc, char **argv)
 {
-	glutInit(&argc, argv);
-	glutInitWindowSize(400, 400);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutMouseFunc(mouseGL);			// may use later for "real time" Ray tracing?
-	glutMotionFunc(mouseMotionGL);	// may use later for "real time" Ray tracing?
-	glutKeyboardFunc(keyboardGL);	// may use later for "real time" Ray tracing?
-	loadScene();
-
 	//Scene starts here
-
+	loadScene();
 	SetupPicture();
 	PrintPicture();
 

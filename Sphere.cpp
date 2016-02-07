@@ -127,33 +127,6 @@ float Sphere::checkHit(Ray ray) {
 	return checkHit(ray.eye, ray.direction);
 }
 
-Eigen::Vector3f CalcT(Eigen::Vector3f eye, Eigen::Vector3f dir, Eigen::Vector3f center, float radius) {
-	double discriminate;
-	Eigen::Vector3f dist = eye-center;
-
-	discriminate = (dir.dot(dist)*dir.dot(dist)) 
-					- (dir.dot(dir)) * (dist.dot(dist)) 
-					- radius*radius;
-
-	if (discriminate < 0) {
-		return Eigen::Vector3f(0,0,0);
-	}
-
-	double sqrtDisc = sqrt(discriminate);
-
-	double plusOp = -dir.dot(dist) + sqrtDisc;
-	plusOp = plusOp / (dir.dot(dir));
-
-	if (discriminate == 0) {
-		return Eigen::Vector3f(1, plusOp, 0);
-	}
-
-	double minOp = -dir.dot(dist) - sqrtDisc;
-	plusOp = plusOp / (dir.dot(dir));
-
-	return Eigen::Vector3f(2, plusOp, minOp);
-}
-
 float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 	Eigen::Vector3f dist = eye-center;
 
@@ -161,7 +134,7 @@ float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 	double B = (2*dir).dot(dist);
 	double C = (dist).dot(dist) - radius*radius;
 
-	Eigen::Vector3f quad = /*CalcT(eye, dir, center, radius);*/ QuadraticFormula(A, B, C);
+	Eigen::Vector3f quad = QuadraticFormula(A, B, C);
 
 	if (quad(0) == 0) {
 		//SHOULD BE AN ERROR
@@ -172,13 +145,16 @@ float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 		return quad(1);
 	}
 
-	if (abs(quad(1)) <= abs(quad(2))) {
+	if (fabs(quad(1)) <= fabs(quad(2))) {
 		return quad(1);
 	} else {
 		return quad(2);
 	}
 }
 
+// return vector: inxex 1: how many answers there are
+// index 2: the positive output
+// index 3: the negative output
 Eigen::Vector3f QuadraticFormula(double A, double B, double C) {
 	double discriminate = B*B - 4*A*C;
 
