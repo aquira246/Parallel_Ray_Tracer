@@ -54,9 +54,9 @@ void loadScene()
 	InitCamera();
 
 	boxOfSpheres = Box(Eigen::Vector3f(0, 0, 5), 10, 10, 10);
-	/*boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(0, 0, 3), .2));
+	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(0, 0, 3), .2));
 	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
-	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(.2, 1, 2), .4));*/
+	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(.2, 1, 2), .4));
 	
 
 	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(0, 0, 1.8), .2));
@@ -221,9 +221,9 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitWindowSize(400, 400);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutMouseFunc(mouseGL);
-	glutMotionFunc(mouseMotionGL);
-	glutKeyboardFunc(keyboardGL);
+	glutMouseFunc(mouseGL);			// may use later for "real time" Ray tracing?
+	glutMotionFunc(mouseMotionGL);	// may use later for "real time" Ray tracing?
+	glutKeyboardFunc(keyboardGL);	// may use later for "real time" Ray tracing?
 	loadScene();
 
 	//Scene starts here
