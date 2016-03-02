@@ -3,7 +3,7 @@ CC=icpc
 CFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost
 INC=-I$(EIGEN3_INCLUDE_DIR) -I./ -I/usr/local/cuda/include
 LIB=-DGL_GLEXT_PROTOTYPES -lglut -lGL -lGLU
-OBJECT = Box.o Image.o main.o Picture.o Pixel.o Ray.o Sphere.o
+OBJECT = Box.o Image.o main.o Picture.o Pixel.o Ray.o Sphere.o Shape.o
 
 ifdef NOCUDA
 	CFLAGS += -D NOCUDA
@@ -41,11 +41,11 @@ run:
 	./rt
 clean:
 	rm -f *~ *.o a.out rt
-clear:
+clear: $(OBJECT)
 	clear
 	rm -f *~ *.o a.out rt
 	$(CC) $(CFLAGS) $(INC) *.cpp $(LIB) -o rt
-fast:
+fast: $(OBJECT)
 	rm -f *~ *.o a.out rt
 	clear
 	$(CC) $(CFLAGS) $(INC) *.cpp $(LIB) -o rt

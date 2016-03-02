@@ -47,15 +47,15 @@ void Box::addSphere(Sphere s) {
 }
 
 hit_t Box::checkHit(Ray testRay) {
-	Sphere * hitSphere;
+	Sphere * hitSphere = NULL;
 	bool hit = false;
 	float bestT = 100;
 
 	hit_t ret;
 
-	for (int i = 0; i < spheres.size(); ++i)
+	for (unsigned int i = 0; i < spheres.size(); ++i)
 	{
-		float t = spheres[i].checkHit(testRay);
+		float t = spheres[i].checkHit(testRay.eye, testRay.direction);
 		if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
 			hitSphere = &spheres[i];
 			bestT = t;
