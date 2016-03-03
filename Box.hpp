@@ -3,11 +3,11 @@
 #define __Box__
 
 #include <Eigen/Dense>
-#include <Sphere.hpp>
+#include <Shape.hpp>
 #include <vector>
 
 typedef struct hit_struct {
-   Sphere *hitSphere;
+   Shape *hitShape;
    double t;
    bool isHit;
 } hit_t;
@@ -27,9 +27,8 @@ class Box
 
 		hit_t checkHit(Ray testRay);
 
-		std::vector<Sphere> spheres;
-		void addSphere(Sphere s);
-		void addSphere(Eigen::Vector3f center, float radius);
+		std::vector<Shape *> shapes;
+		void addShape(Shape *s);
 
 
 	private:

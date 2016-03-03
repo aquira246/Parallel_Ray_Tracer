@@ -1,7 +1,7 @@
-a.out
+rt
 *.exe
 *.o
-a1
+a.out
 results.tga
 *.obj
 *~

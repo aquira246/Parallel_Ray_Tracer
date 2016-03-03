@@ -15,6 +15,7 @@
 #include "Box.hpp"
 #include "Ray.hpp"
 #include "Parse.hpp"
+#include "Shape.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -30,6 +31,7 @@ Eigen::Vector3f LightDir;
 Eigen::Vector3f backgroundCol;
 Picture pic;
 Box boxOfSpheres;
+std::vector<Sphere> allSpheres;
 
 Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
 Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
@@ -56,15 +58,17 @@ void loadScene()
 	InitCamera();
 
 	boxOfSpheres = Box(Eigen::Vector3f(0, 0, 5), 10, 10, 10);
-	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(0, 0, 3), .2));
-	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
-	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(.2, 1, 2), .4));
-	
 
-	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(0, 0, 1.8), .2));
-	boxOfSpheres.addSphere(Sphere(Eigen::Vector3f(.5, -.5, 2), .4));
+	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 3), .2));
+	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
+	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, 1, 2), .4));
+	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 1.8), .2));
+	allSpheres.push_back(Sphere(Eigen::Vector3f(.5, -.5, 2), .4));
 
-	//boxOfSpheres.addSphere(Sphere(LightPos, .5));
+	for (unsigned int i = 0; i < allSpheres.size(); ++i)
+	{
+		boxOfSpheres.addShape(&allSpheres[i]);
+	}
 }
 /*
 void mouseGL(int button, int state, int x, int y)
@@ -147,10 +151,10 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	}
 
 	if (isShadow) {
-		return Pixel(hitResult.hitSphere->mat.ambient(0), hitResult.hitSphere->mat.ambient(1), hitResult.hitSphere->mat.ambient(2));
+		return Pixel(hitResult.hitShape->mat.ambient(0), hitResult.hitShape->mat.ambient(1), hitResult.hitShape->mat.ambient(2));
 	}
 
-	Eigen::Vector3f n = (hitPt - hitResult.hitSphere->center).normalized();
+	Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
 
 	Eigen::Vector3f l;
 	if (!USE_DIRECTION)
@@ -172,23 +176,23 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	if (hold < 0)
 		hold = 0;
 
-	Eigen::Vector3f colorD = hold * hitResult.hitSphere->mat.diffuse;
+	Eigen::Vector3f colorD = hold * hitResult.hitShape->mat.diffuse;
 
 	hold = h.dot(n);
 	
 	if (hold < 0)
 		hold = 0;
 
-	Eigen::Vector3f colorS = pow(hold, hitResult.hitSphere->mat.shine) * hitResult.hitSphere->mat.specular;
-	Eigen::Vector3f color = colorD + colorS + hitResult.hitSphere->mat.ambient;
+	Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * hitResult.hitShape->mat.specular;
+	Eigen::Vector3f color = colorD + colorS + hitResult.hitShape->mat.ambient;
 
 	if (print) {
 		cout << "color: " << color << endl << endl;
-		cout << "ambient: " << hitResult.hitSphere->mat.ambient << endl << endl;
+		cout << "ambient: " << hitResult.hitShape->mat.ambient << endl << endl;
 		cout << "diffuse: " << colorD << endl << endl;
 		cout << "specular: " << colorS << endl << endl;
 		cout << "normals: " << n << endl << endl;
-		cout << "Hit Point " << hitPt << endl << endl << "Center " << hitResult.hitSphere->center<<endl << endl;
+		cout << "Hit Point " << hitPt << endl << endl << "Center " << hitResult.hitShape->center<<endl << endl;
 	}
 
 	return Pixel(color(0), color(1), color(2));
@@ -204,9 +208,6 @@ void SetupPicture() {
 			laser = ComputeCameraRay(x, y);
 			hit_t hitSphere = boxOfSpheres.checkHit(laser);
 			if (hitSphere.isHit) {
-				/*if (x > width/2 - 5 && x < width/2 + 5 && y > height/2 - 5 && y < height/2 + 5)
-					pic.setPixel(x, y, ComputeLighting(laser, hitSphere, true));
-				else*/
 					pic.setPixel(x, y, ComputeLighting(laser, hitSphere, false));
 			} else {
 				pic.setPixel(x, y, Pixel(.5, .5, .5));

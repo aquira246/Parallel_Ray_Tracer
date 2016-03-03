@@ -66,6 +66,7 @@ void Picture::resize(int w, int h)
 int Picture::getIdx(int x, int y) {
 	int ret = 0;
 	ret = x*width + y;
+	return ret;
 }
 
 void Picture::Print(string fileName) {
