@@ -1,5 +1,4 @@
 #include <Sphere.hpp>
-#include "Helper.h"
 
 using namespace std;
 
