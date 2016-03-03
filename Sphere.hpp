@@ -22,9 +22,6 @@ class Sphere: public Shape
 		// Shape has a center
 		float radius;
 
-		float checkHit(Ray ray) {
-            return checkHit(ray.eye, ray.direction);
-        }
 		float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
 
 

@@ -31,7 +31,7 @@ class Shape
         void SetMaterialByNum(int colorNum);
         void SetMaterial(std::string colorName);
 
-        virtual float checkHit(Ray ray) {
+        float checkHit(Ray ray) {
             return checkHit(ray.eye, ray.direction);
         }
 
