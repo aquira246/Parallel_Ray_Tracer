@@ -2,13 +2,12 @@
 #ifndef __SHAPE__
 #define __SHAPE__
 
-#include <Shape.hpp>
 #include <Eigen/Dense>
 #include <math.h>
-#include <Ray.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream> 
+#include "Ray.hpp"
 
 #define NUM_MATS 7
 
@@ -18,6 +17,15 @@ struct Material
     float shine;
 };
 
+/*
+// POV-ray material
+struct Material
+{
+   Eigen::Vector3f rgb;
+   float ambient, diffuse, specular, roughness;
+}
+*/
+
 class Shape
 {
     public:
@@ -25,7 +33,9 @@ class Shape
         ~Shape();
         
         Material mat;
+        // No matter the shape we generate a bounding sphere
         Eigen::Vector3f center;
+        float radius;
 
         void SetMaterialToMat(Material newMat); 
         void SetMaterialByNum(int colorNum);

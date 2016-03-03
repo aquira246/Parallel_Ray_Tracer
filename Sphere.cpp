@@ -1,16 +1,16 @@
-#include <Sphere.hpp>
+#include "Sphere.hpp"
 
 using namespace std;
 
 Sphere::Sphere() {
 	SetMaterialByNum(rand() % NUM_MATS);
 	center = Eigen::Vector3f(0,0,0);
-	radius = 1;
+	radius = 1.0f;
 }
 Sphere::Sphere(Eigen::Vector3f c) {
 	SetMaterialByNum(rand() % NUM_MATS);
 	center = c;
-	radius = 1;
+	radius = 1.0f;
 }
 Sphere::Sphere(float r){
 	SetMaterialByNum(rand() % NUM_MATS);
@@ -27,7 +27,7 @@ Sphere::~Sphere(){
 }
 
 float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
-	Eigen::Vector3f dist = eye-center;
+	Eigen::Vector3f dist = eye - center;
 
 	double A = dir.dot(dir);
 	double B = (2*dir).dot(dist);

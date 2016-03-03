@@ -2,13 +2,13 @@
 #ifndef __Sphere__
 #define __Sphere__
 
-#include <Shape.hpp>
 #include <Eigen/Dense>
 #include <math.h>
-#include <Ray.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream> 
+#include "Shape.hpp"
+#include "Ray.hpp"
 
 class Sphere: public Shape
 {
@@ -19,11 +19,9 @@ class Sphere: public Shape
 		Sphere(Eigen::Vector3f c, float r);
 		~Sphere();
 		
-		// Shape has a center
-		float radius;
+		// Shape has a center and radius, the only components of a sphere
 
 		float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
-
 
 	private:
 };

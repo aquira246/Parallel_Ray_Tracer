@@ -1,5 +1,5 @@
-#include <Box.hpp>
-#include <Sphere.hpp>
+#include "Box.hpp"
+#include "Sphere.hpp"
 
 using namespace std;
 
@@ -44,7 +44,7 @@ void Box::addShape(Shape *s) {
 }
 
 hit_t Box::checkHit(Ray testRay) {
-	Shape * hitShape = NULL;
+	Shape* hitShape = NULL;
 	bool hit = false;
 	float bestT = 100;
 

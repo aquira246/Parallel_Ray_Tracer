@@ -19,7 +19,6 @@ class Triangle: public Shape
 
         float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
 
-
     protected:
     // Parts of a triangle
     Eigen::Vector3f v0, v1, v2;

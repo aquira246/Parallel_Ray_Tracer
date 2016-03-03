@@ -11,18 +11,21 @@
 #include <iostream>
 #include <memory>
 
-#include <Picture.hpp>
-#include <Box.hpp>
-#include <Ray.hpp>
-#include <Sphere.hpp>
-#include <Shape.hpp>
+#include "Picture.hpp"
+#include "Box.hpp"
+#include "Sphere.hpp"
+#include "Sphere.hpp"
+#include "Triangle.hpp"
+#include "Ray.hpp"
+#include "Shape.hpp"
 #include "Parse.hpp"
-#include <Triangle.hpp>
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <vector>
 #include <math.h>
+
+#include <cuda_runtime.h>
 
 using namespace std;
 
@@ -241,7 +244,7 @@ int main(int argc, char **argv)
 
    infile = fopen(argv[1], "r");
    if(infile) {
-      Parse(infile);
+      cout << Parse(infile) << " objects parsed from scene file" << endl;
    }
    else {
       perror("fopen");
