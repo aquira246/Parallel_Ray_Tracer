@@ -2,13 +2,13 @@
 #ifndef __Sphere__
 #define __Sphere__
 
-#include <Shape.hpp>
 #include <Eigen/Dense>
 #include <math.h>
-#include <Ray.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream> 
+#include "Shape.hpp"
+#include "Ray.hpp"
 
 class Sphere: public Shape
 {

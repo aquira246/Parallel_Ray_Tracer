@@ -3,8 +3,8 @@
 #define __Box__
 
 #include <Eigen/Dense>
-#include <Shape.hpp>
 #include <vector>
+#include "Shape.hpp"
 
 typedef struct hit_struct {
    Shape *hitShape;

@@ -2,13 +2,12 @@
 #ifndef __SHAPE__
 #define __SHAPE__
 
-#include <Shape.hpp>
 #include <Eigen/Dense>
 #include <math.h>
-#include <Ray.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream> 
+#include "Ray.hpp"
 
 #define NUM_MATS 7
 
