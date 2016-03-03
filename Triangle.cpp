@@ -2,11 +2,13 @@
 
 using namespace std;
 
+constexpr float kEpsilon = 1e-8; 
+
 Triangle::Triangle() {
     SetMaterialByNum(rand() % NUM_MATS);
-    v0 = 0;
-    v1 = 0;
-    v2 = 0;
+    v0 = Eigen::Vector3f();
+    v1 = Eigen::Vector3f();
+    v2 = Eigen::Vector3f();
     Initialize();
 }
 
@@ -29,51 +31,38 @@ void Triangle::Initialize() {
 
     // no need to normalize
     normal = v0v1.cross(v0v2);
-    areaSqr = normal.length();
+    areaSqr = normal.norm();
 }
 
+// TODO! RETURN UV SO YOU CAN INTERPOLATE COLORS
+//  u * cols[0] + v * cols[1] + (1 - u - v) * cols[2];
 // http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
 float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
-    float t;
+    Eigen::Vector3f v0v1 = v1 - v0;
+    Eigen::Vector3f v0v2 = v2 - v0;
+    Eigen::Vector3f pvec = dir.cross(v0v2);
+    float det = v0v1.dot(pvec);
 
-    // Step 1: finding P
-    // check if ray and plane are parallel ?
-    float NdotRayDirection = normal.dot(dir);
-    
-    if (fabs(NdotRayDirection) < kEpsilon) // almost 0
-       return 0; // they are parallel so they don't intersect !
+    #ifdef CULLING
+    // if the determinant is negative the triangle is backfacing and can be culled
+    // if the determinant is close to 0, the ray misses the triangle
+    if (det < kEpsilon) return 0;
+    #else
+    // ray and triangle are parallel if det is close to 0
+    if (fabs(det) < kEpsilon) return 0;
+    #endif
 
-    // compute d parameter using equation 2
-    float d = normal.dotProduct(v0);
+    float invDet = 1 / det;
 
-    // compute t (equation 3)
-    t = (normal.dotProduct(eye) + d) / NdotRayDirection;
-    // check if the triangle is in behind the ray
-    if (t < 0) return 0; // the triangle is behind
+    Eigen::Vector3f tvec = eye - v0;
+    float u = tvec.dot(pvec) * invDet;
+    if (u < 0 || u > 1) return 0;
 
-    // compute the intersection point using equation 1
-    Vec3f P = eye + t * dir;
+    Eigen::Vector3f qvec = tvec.cross(v0v1);
+    float v = dir.dot(qvec) * invDet;
+    if (v < 0 || u + v > 1) return 0;
 
-    // Step 2: inside-outside test
-    Vec3f C; // vector perpendicular to triangle's plane
+    float t = v0v2.dot(qvec) * invDet;
 
-    // edge 0
-    Vec3f edge0 = v1 - v0;
-    Vec3f vp0 = P - v0;
-    C = edge0.crossProduct(vp0);
-    if (normal.dotProduct(C) < 0) return 0; // P is on the right side
-
-    // edge 1
-    Vec3f edge1 = v2 - v1;
-    Vec3f vp1 = P - v1;
-    C = edge1.crossProduct(vp1);
-    if (normal.dotProduct(C) < 0) return 0; // P is on the right side
-
-    // edge 2
-    Vec3f edge2 = v0 - v2;
-    Vec3f vp2 = P - v2;
-    C = edge2.crossProduct(vp2);
-    if (normal.dotProduct(C) < 0) return 0; // P is on the right side;
-
-    return t; // this ray hits the triangle at t
+    return t;
 } 

@@ -26,7 +26,7 @@ class Triangle: public Shape
     Eigen::Vector3f normal;
     float areaSqr;
     
-    Initialize();
+    void Initialize();
 };
 
 #endif
