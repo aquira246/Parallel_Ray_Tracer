@@ -5,12 +5,12 @@ using namespace std;
 Sphere::Sphere() {
 	SetMaterialByNum(rand() % NUM_MATS);
 	center = Eigen::Vector3f(0,0,0);
-	radius = 1;
+	radius = 1.0f;
 }
 Sphere::Sphere(Eigen::Vector3f c) {
 	SetMaterialByNum(rand() % NUM_MATS);
 	center = c;
-	radius = 1;
+	radius = 1.0f;
 }
 Sphere::Sphere(float r){
 	SetMaterialByNum(rand() % NUM_MATS);

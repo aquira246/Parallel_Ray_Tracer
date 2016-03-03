@@ -14,9 +14,11 @@
 #include "Picture.hpp"
 #include "Box.hpp"
 #include "Sphere.hpp"
+#include "Sphere.hpp"
+#include "Triangle.hpp"
 #include "Ray.hpp"
-#include "Parse.hpp"
 #include "Shape.hpp"
+#include "Parse.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -31,8 +33,9 @@ Eigen::Vector3f LightPos;
 Eigen::Vector3f LightDir;
 Eigen::Vector3f backgroundCol;
 Picture pic;
-Box boxOfSpheres;
+Box boxOfShapes;
 std::vector<Sphere> allSpheres;
+std::vector<Triangle> allTriangles;
 
 Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
 Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
@@ -58,7 +61,7 @@ void loadScene()
 	backgroundCol = Eigen::Vector3f(0,0,0);
 	InitCamera();
 
-	boxOfSpheres = Box(Eigen::Vector3f(0, 0, 5), 10, 10, 10);
+	boxOfShapes = Box(Eigen::Vector3f(0, 0, 5), 10, 10, 10);
 
 	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 3), .2));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
@@ -66,9 +69,16 @@ void loadScene()
 	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 1.8), .2));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(.5, -.5, 2), .4));
 
+	// allTriangles.push_back(Triangle(Eigen::Vector3f(-5, -3, 2), Eigen::Vector3f(.5, -3, 2), Eigen::Vector3f(2.5, 2, 2)));
+
 	for (unsigned int i = 0; i < allSpheres.size(); ++i)
 	{
-		boxOfSpheres.addShape(&allSpheres[i]);
+		boxOfShapes.addShape(&allSpheres[i]);
+	}
+
+	for (unsigned int i = 0; i < allTriangles.size(); ++i)
+	{
+		boxOfShapes.addShape(&allTriangles[i]);
 	}
 }
 /*
@@ -138,7 +148,7 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	if (!USE_DIRECTION) {
 		isShadow = true;
 		Ray shadowRay = Ray(LightPos, hitPt - LightPos);
-		hit_t hitSphere = boxOfSpheres.checkHit(shadowRay);
+		hit_t hitSphere = boxOfShapes.checkHit(shadowRay);
 		if (hitSphere.isHit) {
 			Eigen::Vector3f shadowHit = shadowRay.eye + shadowRay.direction * hitSphere.t;
 			//cout << "Hit ray: (" << hitPt (0) << ", " << hitPt (1) << ", " << hitPt (0) << ")" << endl;
@@ -207,7 +217,7 @@ void SetupPicture() {
 		for (int y = 0; y < height; ++y)
 		{
 			laser = ComputeCameraRay(x, y);
-			hit_t hitSphere = boxOfSpheres.checkHit(laser);
+			hit_t hitSphere = boxOfShapes.checkHit(laser);
 			if (hitSphere.isHit) {
 					pic.setPixel(x, y, ComputeLighting(laser, hitSphere, false));
 			} else {

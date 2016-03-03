@@ -36,13 +36,13 @@ class Shape
         Material mat;
         // No matter the shape we generate a bounding sphere
         Eigen::Vector3f center;
-        Eigen::Vector3f radius;
+        float radius;
 
         void SetMaterialToMat(Material newMat); 
         void SetMaterialByNum(int colorNum);
         void SetMaterial(std::string colorName);
 
-        virtual float checkHit(Ray ray) {
+        float checkHit(Ray ray) {
             return checkHit(ray.eye, ray.direction);
         }
 
