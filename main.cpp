@@ -4,15 +4,17 @@
 #ifdef __unix__
 #include <GL/glut.h>
 #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
 #include <memory>
 
-#include <Picture.hpp>
-#include <Box.hpp>
-#include <Ray.hpp>
+#include "Picture.hpp"
+#include "Box.hpp"
+#include "Ray.hpp"
+#include "Parse.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -64,7 +66,7 @@ void loadScene()
 
 	//boxOfSpheres.addSphere(Sphere(LightPos, .5));
 }
-
+/*
 void mouseGL(int button, int state, int x, int y)
 {
 	int modifier = glutGetModifiers();
@@ -110,7 +112,7 @@ void keyboardGL(unsigned char key, int x, int y)
 
 	}
 }
-
+*/
 Ray ComputeCameraRay(int i, int j) {
 	double normalized_i = (i/(float)pic.width) - .5;
 	double normalized_j = (j/(float)pic.height) - .5;
@@ -219,10 +221,26 @@ void PrintPicture() {
 
 int main(int argc, char **argv)
 {
+   FILE* infile;
+ 
+   if(argc < 2) {
+      cout << "Usage: rt <input_scene.pov>" << endl;
+      exit(EXIT_FAILURE);
+   }
+
+   infile = fopen(argv[1], "r");
+   if(infile) {
+      Parse(infile);
+   }
+   else {
+      perror("fopen");
+      exit(EXIT_FAILURE);
+   }
+
 	//Scene starts here
-	loadScene();
-	SetupPicture();
-	PrintPicture();
+	//loadScene();
+	//SetupPicture();
+	//PrintPicture();
 
 	return 0;
 }
