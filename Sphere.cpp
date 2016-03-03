@@ -27,7 +27,7 @@ Sphere::~Sphere(){
 }
 
 float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
-	Eigen::Vector3f dist = eye-center;
+	Eigen::Vector3f dist = eye - center;
 
 	double A = dir.dot(dir);
 	double B = (2*dir).dot(dist);

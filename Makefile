@@ -3,7 +3,7 @@ CC=icpc
 CFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost
 INC=-I$(EIGEN3_INCLUDE_DIR) -I./ -I/usr/local/cuda/include
 LIB=-DGL_GLEXT_PROTOTYPES -lglut -lGL -lGLU
-OBJECT = Box.o Image.o main.o Picture.o Pixel.o Ray.o Sphere.o Shape.o
+OBJECT = Box.o Image.o main.o Picture.o Pixel.o Ray.o Sphere.o Shape.o Parse.o Tokens.o
 
 ifdef NOCUDA
 	CFLAGS += -D NOCUDA

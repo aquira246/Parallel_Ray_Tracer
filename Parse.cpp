@@ -367,31 +367,34 @@ void ParseGlobalSettings() {
 }
 
 /* main parsing function calling functions to parse each object;  */
-int Parse(FILE* infile) { 
-  InitializeToken(infile);
-  GetToken();
-  while(Token.id != T_EOF) { 
-    switch(Token.id) { 
-      case T_CAMERA:
-         ParseCamera();
-         break;
-       case T_TRIANGLE:
-         ParseTriangle();
-         break;
-       case T_SPHERE:
-         ParseSphere();
-         break;
-       case T_PLANE:
-         ParsePlane();
-         break;
-       case T_LIGHT_SOURCE:
-         ParseLightSource();
-         break;
-       case T_GLOBAL_SETTINGS:
-         ParseGlobalSettings();
-         break;
-       default: Error("Unknown statement");
-    }
-    GetToken();
-  }
+int Parse(FILE* infile) {
+   int numObjects = 0;
+   InitializeToken(infile);
+   GetToken();
+   while(Token.id != T_EOF) { 
+      switch(Token.id) { 
+         case T_CAMERA:
+            ParseCamera();
+            break;
+         case T_TRIANGLE:
+            ParseTriangle();
+            break;
+         case T_SPHERE:
+            ParseSphere();
+            break;
+         case T_PLANE:
+            ParsePlane();
+            break;
+         case T_LIGHT_SOURCE:
+            ParseLightSource();
+            break;
+         case T_GLOBAL_SETTINGS:
+            ParseGlobalSettings();
+            break;
+         default: Error("Unknown statement");
+      }
+      GetToken();
+      ++numObjects;
+   }
+   return numObjects;
 }

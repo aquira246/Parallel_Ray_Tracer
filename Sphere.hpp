@@ -19,12 +19,12 @@ class Sphere: public Shape
 		Sphere(Eigen::Vector3f c, float r);
 		~Sphere();
 		
-		// Shape has a center
-		float radius;
+		// Shape has a center and radius
 
 		float checkHit(Ray ray) {
             return checkHit(ray.eye, ray.direction);
-        }
+      }
+
 		float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
 
 

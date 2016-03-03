@@ -13,6 +13,7 @@
 
 #include "Picture.hpp"
 #include "Box.hpp"
+#include "Sphere.hpp"
 #include "Ray.hpp"
 #include "Parse.hpp"
 #include "Shape.hpp"
@@ -231,7 +232,7 @@ int main(int argc, char **argv)
 
    infile = fopen(argv[1], "r");
    if(infile) {
-      Parse(infile);
+      cout << Parse(infile) << " objects parsed from scene file" << endl;
    }
    else {
       perror("fopen");

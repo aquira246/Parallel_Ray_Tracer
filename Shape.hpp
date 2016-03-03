@@ -18,6 +18,15 @@ struct Material
     float shine;
 };
 
+/*
+// POV-ray material
+struct Material
+{
+   Eigen::Vector3f rgb;
+   float ambient, diffuse, specular, roughness;
+}
+*/
+
 class Shape
 {
     public:
@@ -25,7 +34,9 @@ class Shape
         ~Shape();
         
         Material mat;
+        // No matter the shape we generate a bounding sphere
         Eigen::Vector3f center;
+        Eigen::Vector3f radius;
 
         void SetMaterialToMat(Material newMat); 
         void SetMaterialByNum(int colorNum);
