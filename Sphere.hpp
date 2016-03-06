@@ -9,6 +9,7 @@
 #include <iostream> 
 #include "Shape.hpp"
 #include "Ray.hpp"
+#include "VectorMath.hpp"
 
 class Sphere: public Shape
 {

@@ -19,6 +19,7 @@
 #include "Ray.hpp"
 #include "Shape.hpp"
 #include "Parse.hpp"
+#include "VectorMath.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -53,8 +54,8 @@ void InitCamera() {
 
 	CameraPos = Eigen::Vector3f(0,0,0);
 	CameraDirection = Eigen::Vector3f(0,0,1);
-	CameraRight = CameraDirection.cross(Up);
-	CameraUp = CameraRight.cross(CameraDirection);
+	CameraRight = cross(CameraDirection, Up);
+	CameraUp = cross(CameraRight, CameraDirection);
 }
 
 void loadScene()
@@ -177,22 +178,25 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		l = LightDir;
 
 	l.normalize();
+	// l = normalize(l);
 
 	Eigen::Vector3f v = -hitPt;
 	v.normalize();
+	// v = normalize(v);
 
 	Eigen::Vector3f h = l + v;
 	h.normalize();
+	// h = normalize(h);
 
 	double hold;
-	hold = l.dot(n);
+	hold = dot(l, n);
 
 	if (hold < 0)
 		hold = 0;
 
 	Eigen::Vector3f colorD = hold * rgb;
 
-	hold = h.dot(n);
+	hold = dot(h, n);
 	
 	if (hold < 0)
 		hold = 0;
