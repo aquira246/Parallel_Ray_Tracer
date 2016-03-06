@@ -1,23 +1,23 @@
-#include <Triangle.hpp>
+#include "Triangle.hpp"
 
 using namespace std;
 
 constexpr float kEpsilon = 1e-8; 
 
 Triangle::Triangle() {
-    SetMaterialByNum(rand() % NUM_MATS);
-    v0 = Eigen::Vector3f();
-    v1 = Eigen::Vector3f();
-    v2 = Eigen::Vector3f();
-    Initialize();
+   SetMaterialByNum(rand() % NUM_MATS);
+   a = Eigen::Vector3f();
+   b = Eigen::Vector3f();
+   c = Eigen::Vector3f();
+   Initialize();
 }
 
-Triangle::Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3) {
-    SetMaterialByNum(rand() % NUM_MATS);
-    v0 = pt1;
-    v1 = pt2;
-    v2 = pt3;
-    Initialize();
+Triangle::Triangle(Eigen::Vector3f pta, Eigen::Vector3f ptb, Eigen::Vector3f ptc) {
+   SetMaterialByNum(rand() % NUM_MATS);
+   a = pta;
+   b = ptb;
+   c = ptc;
+   Initialize();
 }
 
 Triangle::~Triangle(){
@@ -25,44 +25,82 @@ Triangle::~Triangle(){
 }
 
 void Triangle::Initialize() {
-    // compute plane's normal
-    Eigen::Vector3f v0v1 = v1 - v0;
-    Eigen::Vector3f v0v2 = v2 - v0;
+   // compute plane's normal
+   Eigen::Vector3f ab = b - a;
+   Eigen::Vector3f ac = c - a;
 
-    // no need to normalize
-    normal = v0v1.cross(v0v2);
-    areaSqr = normal.norm();
+   // no need to normalize
+   normal = ab.cross(ac);
+   areaSqr = normal.norm();
+   // the not offsetted center of the circumsphere
+   center = normal.cross(ab) * magnitude(ac) + ac.cross(normal) * magnitude(ab);
+   // radius ofthe circumsphere
+   radius = magnitude(center);
+   // offset the center properly in the world
+   center += a;
 }
 
 // TODO! RETURN UV SO YOU CAN INTERPOLATE COLORS
 //  u * cols[0] + v * cols[1] + (1 - u - v) * cols[2];
 // http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
 float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
-    Eigen::Vector3f v0v1 = v1 - v0;
-    Eigen::Vector3f v0v2 = v2 - v0;
-    Eigen::Vector3f pvec = dir.cross(v0v2);
-    float det = v0v1.dot(pvec);
+   // first check for circumsphere hit
+   Eigen::Vector3f dist = eye - center;
 
-    #ifdef CULLING
-    // if the determinant is negative the triangle is backfacing and can be culled
-    // if the determinant is close to 0, the ray misses the triangle
-    if (det < kEpsilon) return 0;
-    #else
-    // ray and triangle are parallel if det is close to 0
-    if (fabs(det) < kEpsilon) return 0;
-    #endif
+   double A = dir.dot(dir);
+   double B = (2*dir).dot(dist);
+   double C = (dist).dot(dist) - radius*radius;
 
-    float invDet = 1 / det;
+   Eigen::Vector3f quad = QuadraticFormula(A, B, C);
+   float result;
 
-    Eigen::Vector3f tvec = eye - v0;
-    float u = tvec.dot(pvec) * invDet;
-    if (u < 0 || u > 1) return 0;
+   if (quad(0) == 0) {
+      //SHOULD BE AN ERROR
+      result = 0;
+   }
 
-    Eigen::Vector3f qvec = tvec.cross(v0v1);
-    float v = dir.dot(qvec) * invDet;
-    if (v < 0 || u + v > 1) return 0;
+	if (quad(0) == 1) {
+      result = quad(1);
+	}
 
-    float t = v0v2.dot(qvec) * invDet;
+   if (fabs(quad(1)) <= fabs(quad(2))) {
+      result = quad(1);
+   } else {
+      result = quad(2);
+   }
 
-    return t;
+   // failure to even hit the circumsphere
+   if (result < 0) {
+      return 0;
+   }
+
+   // then check triangle hit
+   Eigen::Vector3f ab = b - a;
+   Eigen::Vector3f ac = c - a;
+
+   Eigen::Vector3f pvec = dir.cross(ac);
+   float det = ab.dot(pvec);
+
+   #ifdef CULLING
+   // if the determinant is negative the triangle is backfacing and can be culled
+   // if the determinant is close to 0, the ray misses the triangle
+   if (det < kEpsilon) return 0;
+   #else
+   // ray and triangle are parallel if det is close to 0
+   if (fabs(det) < kEpsilon) return 0;
+   #endif
+
+   float invDet = 1 / det;
+
+   Eigen::Vector3f tvec = eye - a;
+   float u = tvec.dot(pvec) * invDet;
+   if (u < 0 || u > 1) return 0;
+
+   Eigen::Vector3f qvec = tvec.cross(ab);
+   float v = dir.dot(qvec) * invDet;
+   if (v < 0 || u + v > 1) return 0;
+
+   float t = ac.dot(qvec) * invDet;
+
+   return t;
 } 
