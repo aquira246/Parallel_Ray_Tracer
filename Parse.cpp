@@ -7,9 +7,14 @@
 #include <assert.h>
 #include <iostream>
 #include <math.h> 
+#include <vector> 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include "Tokens.hpp"
+#include "types.h"
+#include "Triangle.hpp"
+#include "Sphere.hpp"
+//#include "Plane.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -24,10 +29,6 @@ printing the current line number and an error message.
 (A real parser would have better error recovery, but this 
 simple approach greatly simplifies the code and is sufficient
 for our purposes).
-
-Although this code runs, it requires additions to make it fully 
-functional. Search for comments starting with TODO to find 
-places requiring modification.
 */
 
 struct Finish { 
@@ -42,7 +43,7 @@ struct Finish {
 } typedef Finish;
 
 struct ModifierStruct { 
-   Vector4f pigment;
+   color_t pigment;
    struct Finish finish;
    double interior;
 } typedef ModifierStruct;
@@ -89,30 +90,30 @@ void ParseVector(Vector3f &v) {
   ParseRightAngle();
 }
 
-void ParseRGBFColor(Vector4f &c) {
+void ParseRGBFColor(color_t &c) {
   ParseLeftAngle();
-  c[0] = ParseDouble();
+  c.r = ParseDouble();
   ParseComma();
-  c[1] = ParseDouble();
+  c.g = ParseDouble();
   ParseComma();
-  c[2] = ParseDouble();
+  c.b = ParseDouble();
   ParseComma();
-  c[3] = ParseDouble();
+  c.f = ParseDouble();
   ParseRightAngle();
 }
 
-void ParseRGBColor(Vector4f &c) { 
+void ParseRGBColor(color_t &c) { 
   ParseLeftAngle();
-  c[0] = ParseDouble();
+  c.r = ParseDouble();
   ParseComma();
-  c[1] = ParseDouble();
+  c.g = ParseDouble();
   ParseComma();
-  c[2] = ParseDouble();
-  c[3] = 0.0;
+  c.b = ParseDouble();
+  c.f = 0.0;
   ParseRightAngle();
 }
 
-void ParseColor(Vector4f &c) { 
+void ParseColor(color_t &c) { 
   GetToken();
   if(Token.id == T_RGB) 
     ParseRGBColor(c);
@@ -121,11 +122,11 @@ void ParseColor(Vector4f &c) {
   else Error("Expected rgb or rgbf");
 }
 
-void PrintColor(Vector4f &c) { 
-  printf("rgbf <%.3g,%.3g,%.3g,%.3g>", c[0], c[1], c[2], c[3]);
+void PrintColor(color_t &c) { 
+  printf("rgbf <%.3g,%.3g,%.3g,%.3g>", c.r, c.g, c.b, c.f);
 }
 
-void ParsePigment(Vector4f &pigment) { 
+void ParsePigment(color_t &pigment) { 
   ParseLeftCurly();
   while(1) { 
     GetToken();
@@ -136,7 +137,7 @@ void ParsePigment(Vector4f &pigment) {
   }    
 }
 
-void PrintPigment(Vector4f &pigment) {
+void PrintPigment(color_t &pigment) {
   printf("\tpigment { color ");
   PrintColor(pigment);
   printf("}");
@@ -197,10 +198,10 @@ void ParseInterior(double interior) {
 
 
 void InitModifiers(struct ModifierStruct &modifiers) { 
-  modifiers.pigment[0] = 0;
-  modifiers.pigment[1] = 0;
-  modifiers.pigment[2] = 0;
-  modifiers.pigment[3] = 0;
+  modifiers.pigment.r = 0;
+  modifiers.pigment.g = 0;
+  modifiers.pigment.b = 0;
+  modifiers.pigment.f = 0;
 
   modifiers.finish.ambient    = 0.1;
   modifiers.finish.diffuse    = 0.6;
@@ -241,51 +242,50 @@ void PrintModifiers(ModifierStruct &modifiers) {
 }
 
 
-void ParseCamera() { 
-  Vector3f location, right, up, look_at; 
-  double angle;
-  int done = FALSE;
+void ParseCamera(Camera &camera) { 
+   //Vector3f location, right, up, look_at; 
+   double angle;
+   int done = FALSE;
 
-  /* default values */
-  location = Vector3f(0.0, 0.0, 0.0);   
-  look_at = Vector3f(0.0, 0.0, 1.0);
-  right = Vector3f(1.0, 0.0, 0.0);
-  up = Vector3f(0.0, 1.0, 0.0);
-  angle = 60.0 * M_PI / 180.0;
+   // default values
+   //location = Vector3f(0.0, 0.0, 0.0);   
+   //look_at = Vector3f(0.0, 0.0, 1.0);
+   //right = Vector3f(1.0, 0.0, 0.0);
+   //up = Vector3f(0.0, 1.0, 0.0);
+   //angle = 60.0 * M_PI / 180.0;
 
-  ParseLeftCurly();
+   ParseLeftCurly();
 
-  /* parse camera parameters */  
-  while(!done) {     
-    GetToken();
-    switch(Token.id) { 
-    case T_LOCATION:
-      ParseVector(location);
-      break;
-    case T_RIGHT:
-      ParseVector(right);
-      break;
-    case T_UP:
-      ParseVector(up);
-      break;
-    case T_LOOK_AT:
-      ParseVector(look_at);
-      break;
-    case T_ANGLE:
-      angle = M_PI * ParseDouble() / 180.0;
-      break;
-    default:
-      done = TRUE;
-      UngetToken();
-      break;
-    }
-  }
+   // parse camera parameters
+   while(!done) {     
+      GetToken();
+      switch(Token.id) { 
+      case T_LOCATION:
+         ParseVector(camera.position);
+         break;
+      case T_RIGHT:
+         ParseVector(camera.right);
+         break;
+      case T_UP:
+         ParseVector(camera.up);
+         break;
+      case T_LOOK_AT:
+         ParseVector(camera.direction);
+         break;
+      case T_ANGLE:
+         angle = M_PI * ParseDouble() / 180.0;
+         break;
+      default:
+         done = TRUE;
+         UngetToken();
+         break;
+      }
+   }
 
-  ParseRightCurly();
-  //TODO?
+   ParseRightCurly(); 
 }
 
-void ParseSphere() { 
+void ParseSphere(vector<Sphere> &spheres) { 
    Vector3f center; 
    double radius; 
    ModifierStruct modifiers;
@@ -298,12 +298,13 @@ void ParseSphere() {
    ParseVector(center);
    ParseComma();
    radius = ParseDouble();
-
    ParseModifiers(modifiers);
    ParseRightCurly();
+
+   spheres.push_back(Sphere(center, radius));
 }
 
-void ParseTriangle() { 
+void ParseTriangle(vector<Triangle> &triangles) { 
    Vector3f vert1, vert2, vert3;
    ModifierStruct modifiers;
    InitModifiers(modifiers);
@@ -318,6 +319,8 @@ void ParseTriangle() {
    ParseModifiers(modifiers);
 
    ParseRightCurly();
+
+   triangles.push_back(Triangle(vert1, vert2, vert3));
 }
 
 void ParsePlane() { 
@@ -336,19 +339,24 @@ void ParsePlane() {
    ParseRightCurly();
 }
 
-void ParseLightSource() { 
-   Vector4f c = Vector4f(0, 0, 0, 0);
-   Vector3f pos = Vector3f(0, 0, 0);
+void ParseLightSource(vector<Light> &lights) {
+   Light light;
+   //color_t c;
+   //Vector3f pos;
    ParseLeftCurly();
-   ParseVector(pos);
+
+   ParseVector(light.location);
    GetToken();
    if(Token.id != T_COLOR) Error("Error parsing light source: missing color");
-   ParseColor(c);
+   ParseColor(light.color);
+
    ParseRightCurly();
+
+   lights.push_back(light);
 } 
 
 void ParseGlobalSettings() { 
-   Vector4f ambient = Vector4f(0, 0, 0, 0);
+   color_t ambient;
    ParseLeftCurly();
    while(1) { 
      GetToken();
@@ -367,26 +375,26 @@ void ParseGlobalSettings() {
 }
 
 /* main parsing function calling functions to parse each object;  */
-int Parse(FILE* infile) {
+int Parse(FILE* infile, SceneData &scene) {
    int numObjects = 0;
    InitializeToken(infile);
    GetToken();
    while(Token.id != T_EOF) { 
       switch(Token.id) { 
          case T_CAMERA:
-            ParseCamera();
+            ParseCamera(scene.camera);
             break;
          case T_TRIANGLE:
-            ParseTriangle();
+            ParseTriangle(scene.triangles);
             break;
          case T_SPHERE:
-            ParseSphere();
+            ParseSphere(scene.spheres);
             break;
          case T_PLANE:
-            ParsePlane();
+            ParsePlane();//TODO
             break;
          case T_LIGHT_SOURCE:
-            ParseLightSource();
+            ParseLightSource(scene.lights);
             break;
          case T_GLOBAL_SETTINGS:
             ParseGlobalSettings();

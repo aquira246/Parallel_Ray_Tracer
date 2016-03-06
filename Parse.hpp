@@ -7,6 +7,6 @@
 
 #include <stdio.h>
 
-int Parse(FILE* infile);
+int Parse(FILE* infile, SceneData &scene);
 
 #endif /* __PARSE_H__ */

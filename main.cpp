@@ -63,7 +63,7 @@ void loadScene()
 	backgroundCol = Eigen::Vector3f(0,0,0);
 	InitCamera();
 
-	boxOfShapes = Box(Eigen::Vector3f(0, 0, 5), 10, 10, 10);
+	boxOfShapes = Box();//Eigen::Vector3f(0, 0, 5), 10, 10, 10);
 
 	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 3), .2));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
@@ -236,6 +236,7 @@ void PrintPicture() {
 int main(int argc, char **argv)
 {
    FILE* infile;
+   SceneData scene;
  
    if(argc < 2) {
       cout << "Usage: rt <input_scene.pov>" << endl;
@@ -244,7 +245,7 @@ int main(int argc, char **argv)
 
    infile = fopen(argv[1], "r");
    if(infile) {
-      cout << Parse(infile) << " objects parsed from scene file" << endl;
+      cout << Parse(infile, scene) << " objects parsed from scene file" << endl;
    }
    else {
       perror("fopen");

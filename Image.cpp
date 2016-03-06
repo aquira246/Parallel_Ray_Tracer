@@ -5,7 +5,7 @@
  * Cal Poly, San Luis Obispo
  */
 
-#include "Image.h"
+#include "Image.hpp"
 
 Image::Image(int width, int height)
 {

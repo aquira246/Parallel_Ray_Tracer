@@ -4,13 +4,14 @@
 using namespace std;
 
 Box::Box() {
-	center = Eigen::Vector3f(0,0,0);
-	width = 1;
-	height = 1;
-	depth = 1;
-	basePt = center - Eigen::Vector3f(width/2.f, height/2.f, depth/2.f);
+	//center = Eigen::Vector3f(0,0,0);
+	//width = 1;
+	//height = 1;
+	//depth = 1;
+	//basePt = center - Eigen::Vector3f(width/2.f, height/2.f, depth/2.f);
 	shapes.clear();
 }
+/*
 Box::Box(Eigen::Vector3f c) {
 	center = c;
 	width = 1;
@@ -34,7 +35,7 @@ Box::Box(Eigen::Vector3f c, float w, float h, float d) {
 	depth = d;
 	basePt = center - Eigen::Vector3f(width/2.f, height/2.f, depth/2.f);
 	shapes.clear();
-}
+}*/
 Box::~Box() {
 }
 

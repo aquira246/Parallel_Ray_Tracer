@@ -7,7 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "Image.h"
+#include "Image.hpp"
 
 class Picture
 {
