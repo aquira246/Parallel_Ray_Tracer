@@ -11,20 +11,14 @@
 
 #define NUM_MATS 7
 
-struct Material
-{
-    Eigen::Vector3f ambient, diffuse, specular;
-    float shine;
-};
 
-/*
 // POV-ray material
 struct Material
 {
    Eigen::Vector3f rgb;
-   float ambient, diffuse, specular, roughness;
-}
-*/
+   float ambient, diffuse, specular, roughness, shine;
+};
+
 
 class Shape
 {
