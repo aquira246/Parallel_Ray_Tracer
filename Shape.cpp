@@ -16,57 +16,71 @@ void Shape::SetMaterialToMat(Material newMat) {
 }
 
 void Shape::SetMaterialByNum(int colorNum) {
-    Eigen::Vector3f a, s, d;
-    float shine;
+    Eigen::Vector3f col;
+    float shine, a, s, d, r;
 
     switch (colorNum) {
         case 0:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.8, .2, .2);
-            s = Eigen::Vector3f(.4, .4, .4);
-            shine = 200;
+            col = Eigen::Vector3f(.8, .2, .2);
+            a = .1;
+            d = .7;
+            s = .5;
+            r = .3;
+            shine = 16;
             break;
         
         case 1:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.2, .2, .8);
-            s = Eigen::Vector3f(.4, .4, .4);
-            shine = 200;
+            col = Eigen::Vector3f(.2, .2, .8);
+            a = .1;
+            d = .7;
+            s = .5;
+            r = .4;
+            shine = 128;
             break;
 
         case 2:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.2, .8, .2);
-            s = Eigen::Vector3f(.4, .4, .4);
-            shine = 200;
+            col = Eigen::Vector3f(.2, .8, .2);
+            a = .1;
+            d = .7;
+            s = .5;
+            r = .6;
+            shine = 8;
             break;
 
         case 3:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.8, .2, .8);
-            s = Eigen::Vector3f(.4, .4, .4);
-            shine = 200;
+            col = Eigen::Vector3f(.8, .2, .8);
+            a = .1;
+            d = .7;
+            s = .5;
+            r = .6;
+            shine = 128;
             break;
 
         case 4:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.2, .8, .8);
-            s = Eigen::Vector3f(.4, .4, .4);
-            shine = 200;
+            col = Eigen::Vector3f(.8, .2, .8);
+            a = .1;
+            d = .7;
+            s = .5;
+            r = .6;
+            shine = 16;
             break;
 
         case 5:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.8, .8, .2);
-            s = Eigen::Vector3f(.4, .4, .4);
-            shine = 200;
+            col = Eigen::Vector3f(.8, .8, .0);
+            a = .1;
+            d = .7;
+            s = .5;
+            r = .7;
+            shine = 128;
             break;
 
         default:
-            a = Eigen::Vector3f(.2, .2, .2);
-            d = Eigen::Vector3f(.6, .6, .6);
-            s = Eigen::Vector3f(.6, .6, .6);
-            shine = 260;
+            col = Eigen::Vector3f(.6, .6, .6);
+            a = .1;
+            d = .5;
+            s = .9;
+            r = .8;
+            shine = 256;
             break;
     }
 
@@ -74,6 +88,8 @@ void Shape::SetMaterialByNum(int colorNum) {
     mat.diffuse = d;
     mat.specular = s;
     mat.shine = shine;
+    mat.rgb = col;
+    mat.roughness = r;
 }
 
 void Shape::SetMaterial(string colorName) {

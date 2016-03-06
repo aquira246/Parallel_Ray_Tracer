@@ -39,7 +39,7 @@ all: $(OBJECT)
 	touch $@
 
 run:
-	./rt
+	./rt resources/bunny_small.pov
 clean:
 	rm -f *~ *.o a.out rt
 clear: $(OBJECT)
@@ -50,4 +50,4 @@ fast: $(OBJECT)
 	rm -f *~ *.o a.out rt
 	clear
 	$(CC) $(CFLAGS) $(INC) *.cpp $(LIB) -o rt
-	./rt
+	./rt resources/bunny_small.pov

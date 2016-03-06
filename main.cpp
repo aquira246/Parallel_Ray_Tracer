@@ -147,14 +147,13 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
 	bool isShadow = false;
 
+	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	if (!USE_DIRECTION) {
 		isShadow = true;
 		Ray shadowRay = Ray(LightPos, hitPt - LightPos);
 		hit_t hitSphere = boxOfShapes.checkHit(shadowRay);
 		if (hitSphere.isHit) {
 			Eigen::Vector3f shadowHit = shadowRay.eye + shadowRay.direction * hitSphere.t;
-			//cout << "Hit ray: (" << hitPt (0) << ", " << hitPt (1) << ", " << hitPt (0) << ")" << endl;
-			//cout << "shadow ray: (" << shadowHit (0) << ", " << shadowHit (1) << ", " << shadowHit (0) << ")" << endl;
 
 			// makes sure we are not shadowing ourselves
 			if (abs(shadowHit(0) - hitPt(0)) < .1 && abs(shadowHit(1) - hitPt(1)) < .1 && abs(shadowHit(2) - hitPt(2)) < .1) {
@@ -163,8 +162,10 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		}
 	}
 
+	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
+	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
 	if (isShadow) {
-		return Pixel(hitResult.hitShape->mat.ambient(0), hitResult.hitShape->mat.ambient(1), hitResult.hitShape->mat.ambient(2));
+		return Pixel(ambient(0), ambient(1), ambient(2));
 	}
 
 	Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
@@ -189,19 +190,21 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	if (hold < 0)
 		hold = 0;
 
-	Eigen::Vector3f colorD = hold * hitResult.hitShape->mat.diffuse;
+	Eigen::Vector3f colorD = hold * rgb;
 
 	hold = h.dot(n);
 	
 	if (hold < 0)
 		hold = 0;
 
-	Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * hitResult.hitShape->mat.specular;
-	Eigen::Vector3f color = colorD + colorS + hitResult.hitShape->mat.ambient;
+	Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * rgb;
+	Eigen::Vector3f color = colorD*hitResult.hitShape->mat.diffuse 
+							+ colorS*hitResult.hitShape->mat.specular 
+							+ ambient;
 
 	if (print) {
 		cout << "color: " << color << endl << endl;
-		cout << "ambient: " << hitResult.hitShape->mat.ambient << endl << endl;
+		cout << "ambient: " << ambient << endl << endl;
 		cout << "diffuse: " << colorD << endl << endl;
 		cout << "specular: " << colorS << endl << endl;
 		cout << "normals: " << n << endl << endl;
@@ -252,9 +255,9 @@ int main(int argc, char **argv)
    }
 
 	//Scene starts here
-	//loadScene();
-	//SetupPicture();
-	//PrintPicture();
+	loadScene();
+	SetupPicture();
+	PrintPicture();
 
 	return 0;
 }
