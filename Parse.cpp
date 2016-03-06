@@ -375,7 +375,7 @@ void ParseGlobalSettings() {
 }
 
 /* main parsing function calling functions to parse each object;  */
-int Parse(FILE* infile, SceneData &scene) {
+int Parse(FILE* infile, Scene &scene) {
    int numObjects = 0;
    InitializeToken(infile);
    GetToken();

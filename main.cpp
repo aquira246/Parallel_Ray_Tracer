@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "Picture.hpp"
-#include "Box.hpp"
+#include "Scene.hpp"
 #include "Sphere.hpp"
 #include "Sphere.hpp"
 #include "Triangle.hpp"
@@ -30,17 +30,17 @@
 
 using namespace std;
 
-bool keyToggles[256] = {false};
+//bool keyToggles[256] = {false};
 
-Eigen::Vector3f LightPos;
-Eigen::Vector3f LightDir;
+//Eigen::Vector3f LightPos;
+//Eigen::Vector3f LightDir;
 Eigen::Vector3f backgroundCol;
 Picture pic;
-Box boxOfShapes;
-std::vector<Sphere> allSpheres;
-std::vector<Triangle> allTriangles;
+Scene scene;
+//std::vector<Sphere> allSpheres;
+//std::vector<Triangle> allTriangles;
 
-Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
+//Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
 Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
@@ -58,37 +58,17 @@ void InitCamera() {
 	CameraUp = cross(CameraRight, CameraDirection);
 }
 
-void loadScene(SceneData &scene)
+void loadScene()
 {
 	pic = Picture(width, height);
 	backgroundCol = Eigen::Vector3f(0,0,0);
 	InitCamera(scene.camera);
 
-	boxOfShapes = Box();
+	//scene = Scene();
 
-   boxOfShapes.triangles = &(scene.triangles);
-   boxOfShapes.spheres = &(scene.spheres);
-
-//Eigen::Vector3f(0, 0, 5), 10, 10, 10);
-/*
-	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 3), .2));
-	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
-	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, 1, 2), .4));
-	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 1.8), .2));
-	allSpheres.push_back(Sphere(Eigen::Vector3f(.5, -.5, 2), .4));
-*/
-	// allTriangles.push_back(Triangle(Eigen::Vector3f(-5, -3, 2), Eigen::Vector3f(.5, -3, 2), Eigen::Vector3f(2.5, 2, 2)));
-/*
-	for (unsigned int i = 0; i < allSpheres.size(); ++i)
-	{
-		boxOfShapes.addShape(&allSpheres[i]);
-	}
-
-	for (unsigned int i = 0; i < allTriangles.size(); ++i)
-	{
-		boxOfShapes.addShape(&allTriangles[i]);
-	}
-*/
+   //scene.triangles = &(scene.triangles);
+   //scene.spheres = &(scene.spheres);
+   
 }
 
 Ray ComputeCameraRay(int i, int j) {
@@ -96,7 +76,7 @@ Ray ComputeCameraRay(int i, int j) {
 	double normalized_j = (j/(float)pic.height) - .5;
 
 	Eigen::Vector3f imagePoint = normalized_i * CameraRight + 
-								normalized_j *CameraUp +
+								normalized_j * CameraUp +
 								CameraPos + CameraDirection;
 	
 	Eigen::Vector3f ray_direction = imagePoint - CameraPos;
@@ -203,7 +183,7 @@ void PrintPicture() {
 int main(int argc, char **argv)
 {
    FILE* infile;
-   SceneData scene;
+   scene = Scene();
  
    if(argc < 2) {
       cout << "Usage: rt <input_scene.pov>" << endl;
@@ -220,7 +200,7 @@ int main(int argc, char **argv)
    }
 
 	//Scene starts here
-	loadScene(scene);
+	loadScene();
 	SetupPicture();
 	PrintPicture();
 
