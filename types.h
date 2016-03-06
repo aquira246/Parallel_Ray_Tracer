@@ -34,12 +34,4 @@ typedef struct DirLight {
    Eigen::Vector3f direction;
 } DirLight;
 
-typedef struct SceneData {
-   Camera camera;
-   std::vector<Light> lights;
-   std::vector<Triangle> triangles;
-   std::vector<Sphere> spheres;
-   //std::vector<Plane> planes;
-} SceneData;
-
 #endif
