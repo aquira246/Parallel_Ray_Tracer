@@ -30,10 +30,10 @@ void Triangle::Initialize() {
    Eigen::Vector3f ac = c - a;
 
    // no need to normalize
-   normal = ab.cross(ac);
+   normal = cross(ab, ac);
    areaSqr = normal.norm();
    // the not offsetted center of the circumsphere
-   center = normal.cross(ab) * magnitude(ac) + ac.cross(normal) * magnitude(ab);
+   center = cross(normal, ab) * magnitude(ac) + cross(ac, normal) * magnitude(ab);
    // radius ofthe circumsphere
    radius = magnitude(center);
    // offset the center properly in the world
@@ -47,9 +47,9 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    // first check for circumsphere hit
    Eigen::Vector3f dist = eye - center;
 
-   double A = dir.dot(dir);
-   double B = (2*dir).dot(dist);
-   double C = (dist).dot(dist) - radius*radius;
+   double A = dot(dir, dir);
+   double B = dot((2*dir), dist);
+   double C = dot(dist, dist) - radius*radius;
 
    Eigen::Vector3f quad = QuadraticFormula(A, B, C);
    float result;
@@ -78,8 +78,8 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    Eigen::Vector3f ab = b - a;
    Eigen::Vector3f ac = c - a;
 
-   Eigen::Vector3f pvec = dir.cross(ac);
-   float det = ab.dot(pvec);
+   Eigen::Vector3f pvec = cross(dir, ac);
+   float det = dot(ab, pvec);
 
    #ifdef CULLING
    // if the determinant is negative the triangle is backfacing and can be culled
@@ -93,14 +93,14 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    float invDet = 1 / det;
 
    Eigen::Vector3f tvec = eye - a;
-   float u = tvec.dot(pvec) * invDet;
+   float u = dot(tvec, pvec) * invDet;
    if (u < 0 || u > 1) return 0;
 
-   Eigen::Vector3f qvec = tvec.cross(ab);
-   float v = dir.dot(qvec) * invDet;
+   Eigen::Vector3f qvec = cross(tvec, ab);
+   float v = dot(dir, qvec) * invDet;
    if (v < 0 || u + v > 1) return 0;
 
-   float t = ac.dot(qvec) * invDet;
+   float t = dot(ac, qvec) * invDet;
 
    return t;
 } 

@@ -29,9 +29,9 @@ Sphere::~Sphere(){
 float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 	Eigen::Vector3f dist = eye - center;
 
-	double A = dir.dot(dir);
-	double B = (2*dir).dot(dist);
-	double C = (dist).dot(dist) - radius*radius;
+	double A = dot(dir, dir);
+	double B = dot((2*dir), dist);
+	double C = dot(dist, dist) - radius*radius;
 
 	Eigen::Vector3f quad = QuadraticFormula(A, B, C);
 
