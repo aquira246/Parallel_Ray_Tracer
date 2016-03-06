@@ -5,6 +5,9 @@
 #include <Eigen/Dense>
 #include <vector>
 #include "Shape.hpp"
+#include "Triangle.hpp"
+#include "Sphere.hpp"
+//#include ""
 
 typedef struct hit_struct {
    Shape *hitShape;
@@ -30,7 +33,9 @@ class Box
 		std::vector<Shape *> shapes;
 		void addShape(Shape *s);
 
-
+      std::vector<Triangle> *triangles;
+      std::vector<Sphere> *spheres;
+//      std::vector<Plane> planes;
 	private:
 };
 

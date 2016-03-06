@@ -50,7 +50,7 @@ int height = 1600;
 
 void InitCamera() {
 	LightPos = Eigen::Vector3f(-1, 1, 1.5);
-	LightDir = Eigen::Vector3f(0, 0, -1);
+	//LightDir = Eigen::Vector3f(0, 0, -1);
 
 	CameraPos = Eigen::Vector3f(0,0,0);
 	CameraDirection = Eigen::Vector3f(0,0,1);
@@ -58,22 +58,27 @@ void InitCamera() {
 	CameraUp = cross(CameraRight, CameraDirection);
 }
 
-void loadScene()
+void loadScene(SceneData &scene)
 {
 	pic = Picture(width, height);
 	backgroundCol = Eigen::Vector3f(0,0,0);
-	InitCamera();
+	InitCamera(scene.camera);
 
-	boxOfShapes = Box();//Eigen::Vector3f(0, 0, 5), 10, 10, 10);
+	boxOfShapes = Box();
 
+   boxOfShapes.triangles = &(scene.triangles);
+   boxOfShapes.spheres = &(scene.spheres);
+
+//Eigen::Vector3f(0, 0, 5), 10, 10, 10);
+/*
 	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 3), .2));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, -1, 2), .4));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(.2, 1, 2), .4));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(0, 0, 1.8), .2));
 	allSpheres.push_back(Sphere(Eigen::Vector3f(.5, -.5, 2), .4));
-
+*/
 	// allTriangles.push_back(Triangle(Eigen::Vector3f(-5, -3, 2), Eigen::Vector3f(.5, -3, 2), Eigen::Vector3f(2.5, 2, 2)));
-
+/*
 	for (unsigned int i = 0; i < allSpheres.size(); ++i)
 	{
 		boxOfShapes.addShape(&allSpheres[i]);
@@ -83,54 +88,9 @@ void loadScene()
 	{
 		boxOfShapes.addShape(&allTriangles[i]);
 	}
-}
-/*
-void mouseGL(int button, int state, int x, int y)
-{
-	int modifier = glutGetModifiers();
-	bool shift = modifier & GLUT_ACTIVE_SHIFT;
-	bool ctrl  = modifier & GLUT_ACTIVE_CTRL;
-	bool alt   = modifier & GLUT_ACTIVE_ALT;
-}
-
-void mouseMotionGL(int x, int y)
-{
-
-}
-
-void keyboardGL(unsigned char key, int x, int y)
-{
-	if (key != 'w' && key != 'a' && key != 's' && key != 'd' && key != 'q' && key != 'e') {
-		keyToggles[key] = !keyToggles[key];
-	}
-
-	switch(key) {
-		case 27:
-			// ESCAPE
-			exit(0);
-			break;
-		case 'w':
-			LightPos += Eigen::Vector3f(0, 1, 0);
-			break;
-		case 's':
-			LightPos += Eigen::Vector3f(0, -1, 0);
-			break;
-		case 'd':
-			LightPos += Eigen::Vector3f(1, 0, 0);
-			break;
-		case 'a':
-			LightPos += Eigen::Vector3f(-1, 0, 0);
-			break;
-		case 'q':
-			LightPos += Eigen::Vector3f(0, 0, 1);
-			break;
-		case 'e':
-			LightPos += Eigen::Vector3f(0, 0, -1);
-			break;
-
-	}
-}
 */
+}
+
 Ray ComputeCameraRay(int i, int j) {
 	double normalized_i = (i/(float)pic.width) - .5;
 	double normalized_j = (j/(float)pic.height) - .5;
@@ -260,7 +220,7 @@ int main(int argc, char **argv)
    }
 
 	//Scene starts here
-	loadScene();
+	loadScene(scene);
 	SetupPicture();
 	PrintPicture();
 

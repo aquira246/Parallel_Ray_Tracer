@@ -51,11 +51,21 @@ hit_t Box::checkHit(Ray testRay) {
 
 	hit_t ret;
 
-	for (unsigned int i = 0; i < shapes.size(); ++i)
+	for (unsigned int i = 0; i < (*triangles).size(); ++i)
 	{
-		float t = shapes[i]->checkHit(testRay.eye, testRay.direction);
+		float t = (*triangles)[i].checkHit(testRay.eye, testRay.direction);
 		if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
-			hitShape = shapes[i];
+			hitShape = &(*triangles)[i];
+			bestT = t;
+			hit = true;
+		}
+	}
+
+	for (unsigned int i = 0; i < (*spheres).size(); ++i)
+	{
+		float t = (*spheres)[i].checkHit(testRay.eye, testRay.direction);
+		if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
+			hitShape = &(*spheres)[i];
 			bestT = t;
 			hit = true;
 		}
