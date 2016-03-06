@@ -177,16 +177,16 @@ Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	else
 		l = LightDir;
 
-	l.normalize();
-	// l = normalize(l);
+	//l.normalize();
+	l = normalize(l);
 
 	Eigen::Vector3f v = -hitPt;
-	v.normalize();
-	// v = normalize(v);
+	//v.normalize();
+	v = normalize(v);
 
 	Eigen::Vector3f h = l + v;
-	h.normalize();
-	// h = normalize(h);
+	//h.normalize();
+	h = normalize(h);
 
 	double hold;
 	hold = dot(l, n);

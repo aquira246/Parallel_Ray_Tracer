@@ -2,6 +2,6 @@ rt
 *.exe
 *.o
 a.out
-results.tga
+*.tga
 *.obj
 *~
