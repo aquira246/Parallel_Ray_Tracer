@@ -5,17 +5,14 @@ using namespace std;
 
 Scene::Scene() {
 	lights.clear();
-	shapes.clear();
+	triangles.clear();
+	spheres.clear();
 }
 
 Scene::~Scene() {
 	lights.clear();
-	shapes.clear();
-}
-
-void Scene::addShape(Shape *s) {
-	//possibly check if the shape is in the Scene first?
-	shapes.push_back(s);
+	triangles.clear();
+	spheres.clear();
 }
 
 hit_t Scene::checkHit(Ray testRay) {
@@ -25,21 +22,21 @@ hit_t Scene::checkHit(Ray testRay) {
 
 	hit_t ret;
 
-	for (unsigned int i = 0; i < (*triangles).size(); ++i)
+	for (unsigned int i = 0; i < triangles.size(); ++i)
 	{
-		float t = (*triangles)[i].checkHit(testRay.eye, testRay.direction);
+		float t = triangles[i].checkHit(testRay.eye, testRay.direction);
 		if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
-			hitShape = &(*triangles)[i];
+			hitShape = &(triangles[i]);
 			bestT = t;
 			hit = true;
 		}
 	}
 
-	for (unsigned int i = 0; i < (*spheres).size(); ++i)
+	for (unsigned int i = 0; i < spheres.size(); ++i)
 	{
-		float t = (*spheres)[i].checkHit(testRay.eye, testRay.direction);
+		float t = spheres[i].checkHit(testRay.eye, testRay.direction);
 		if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
-			hitShape = &(*spheres)[i];
+			hitShape = &(spheres[i]);
 			bestT = t;
 			hit = true;
 		}

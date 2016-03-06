@@ -27,11 +27,8 @@ class Scene
 		std::vector<Light> lights;
 		hit_t checkHit(Ray testRay);
 
-		std::vector<Shape *> shapes;
-		void addShape(Shape *s);
-
-		std::vector<Triangle> *triangles;
-		std::vector<Sphere> *spheres;
+		std::vector<Triangle> triangles;
+		std::vector<Sphere> spheres;
 		//      std::vector<Plane> planes;
 
 		Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print);

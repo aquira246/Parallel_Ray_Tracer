@@ -6,7 +6,8 @@
 #define __PARSE_H__
 
 #include <stdio.h>
-
-int Parse(FILE* infile, SceneData &scene);
+#include "Scene.hpp"
+ 
+int Parse(FILE* infile, Scene &scene);
 
 #endif /* __PARSE_H__ */
