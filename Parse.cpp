@@ -16,6 +16,8 @@
 #include "Sphere.hpp"
 //#include "Plane.hpp"
 
+ #include "Parse.hpp"
+
 using namespace Eigen;
 using namespace std;
 

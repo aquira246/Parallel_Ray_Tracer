@@ -40,7 +40,7 @@ Scene scene;
 //std::vector<Sphere> allSpheres;
 //std::vector<Triangle> allTriangles;
 
-//Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
+Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
 Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
@@ -49,26 +49,24 @@ int width = 1600;
 int height = 1600;
 
 void InitCamera() {
-	LightPos = Eigen::Vector3f(-1, 1, 1.5);
-	//LightDir = Eigen::Vector3f(0, 0, -1);
-
 	CameraPos = Eigen::Vector3f(0,0,0);
 	CameraDirection = Eigen::Vector3f(0,0,1);
 	CameraRight = cross(CameraDirection, Up);
 	CameraUp = cross(CameraRight, CameraDirection);
 }
 
+void InitCamera(Camera camera) {
+	CameraPos = camera.position;
+	CameraDirection = camera.direction;
+	CameraRight = camera.right;
+	CameraUp = camera.up;
+}
+
 void loadScene()
 {
 	pic = Picture(width, height);
 	backgroundCol = Eigen::Vector3f(0,0,0);
-	InitCamera(scene.camera);
-
-	//scene = Scene();
-
-   //scene.triangles = &(scene.triangles);
-   //scene.spheres = &(scene.spheres);
-   
+	InitCamera(scene.camera);   
 }
 
 Ray ComputeCameraRay(int i, int j) {
@@ -84,80 +82,6 @@ Ray ComputeCameraRay(int i, int j) {
 	return Ray(CameraPos, ray_direction);
 }
 
-Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print) {
-	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
-	bool isShadow = false;
-
-	// calculate if the point is in a shadow. If so, we later return the pixel as all black
-	if (!USE_DIRECTION) {
-		isShadow = true;
-		Ray shadowRay = Ray(LightPos, hitPt - LightPos);
-		hit_t hitSphere = boxOfShapes.checkHit(shadowRay);
-		if (hitSphere.isHit) {
-			Eigen::Vector3f shadowHit = shadowRay.eye + shadowRay.direction * hitSphere.t;
-
-			// makes sure we are not shadowing ourselves
-			if (abs(shadowHit(0) - hitPt(0)) < .1 && abs(shadowHit(1) - hitPt(1)) < .1 && abs(shadowHit(2) - hitPt(2)) < .1) {
-				isShadow = false;
-			}
-		}
-	}
-
-	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
-	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
-	if (isShadow) {
-		return Pixel(ambient(0), ambient(1), ambient(2));
-	}
-
-	Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
-
-	Eigen::Vector3f l;
-	if (!USE_DIRECTION)
-		l = (LightPos - hitPt);
-	else
-		l = LightDir;
-
-	//l.normalize();
-	l = normalize(l);
-
-	Eigen::Vector3f v = -hitPt;
-	//v.normalize();
-	v = normalize(v);
-
-	Eigen::Vector3f h = l + v;
-	//h.normalize();
-	h = normalize(h);
-
-	double hold;
-	hold = dot(l, n);
-
-	if (hold < 0)
-		hold = 0;
-
-	Eigen::Vector3f colorD = hold * rgb;
-
-	hold = dot(h, n);
-	
-	if (hold < 0)
-		hold = 0;
-
-	Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * rgb;
-	Eigen::Vector3f color = colorD*hitResult.hitShape->mat.diffuse 
-							+ colorS*hitResult.hitShape->mat.specular 
-							+ ambient;
-
-	if (print) {
-		cout << "color: " << color << endl << endl;
-		cout << "ambient: " << ambient << endl << endl;
-		cout << "diffuse: " << colorD << endl << endl;
-		cout << "specular: " << colorS << endl << endl;
-		cout << "normals: " << n << endl << endl;
-		cout << "Hit Point " << hitPt << endl << endl << "Center " << hitResult.hitShape->center<<endl << endl;
-	}
-
-	return Pixel(color(0), color(1), color(2));
-}
-
 void SetupPicture() {
 	Ray laser;
 
@@ -166,9 +90,9 @@ void SetupPicture() {
 		for (int y = 0; y < height; ++y)
 		{
 			laser = ComputeCameraRay(x, y);
-			hit_t hitSphere = boxOfShapes.checkHit(laser);
+			hit_t hitSphere = scene.checkHit(laser);
 			if (hitSphere.isHit) {
-					pic.setPixel(x, y, ComputeLighting(laser, hitSphere, false));
+					pic.setPixel(x, y, scene.ComputeLighting(laser, hitSphere, false));
 			} else {
 				pic.setPixel(x, y, Pixel(.5, .5, .5));
 			}
