@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include "Sphere.hpp"
+#include "Triangle.hpp"
 
 using namespace std;
 
@@ -20,8 +21,6 @@ hit_t Scene::checkHit(Ray testRay) {
 	bool hit = false;
 	float bestT = 100;
 
-	hit_t ret;
-
 	for (unsigned int i = 0; i < triangles.size(); ++i)
 	{
 		float t = triangles[i].checkHit(testRay.eye, testRay.direction);
@@ -29,6 +28,12 @@ hit_t Scene::checkHit(Ray testRay) {
 			hitShape = &(triangles[i]);
 			bestT = t;
 			hit = true;
+         #ifdef DEBUG
+         cout << "New best hit, position of shape: "
+              << (*hitShape).center[0] << ", "
+              << (*hitShape).center[1] << ", "
+              << (*hitShape).center[2] << endl;
+         #endif
 		}
 	}
 
@@ -39,6 +44,12 @@ hit_t Scene::checkHit(Ray testRay) {
 			hitShape = &(spheres[i]);
 			bestT = t;
 			hit = true;
+         #ifdef DEBUG
+         cout << "New best hit, position of shape: "
+              << (*hitShape).center[0] << ", "
+              << (*hitShape).center[1] << ", "
+              << (*hitShape).center[2] << endl;
+         #endif
 		}
 	}
 
@@ -46,6 +57,7 @@ hit_t Scene::checkHit(Ray testRay) {
 		hitShape = NULL;
 	}
 
+	hit_t ret;
 	ret.hitShape = hitShape;
 	ret.isHit = hit;
 	ret.t = bestT;
@@ -70,7 +82,7 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			Eigen::Vector3f shadowHit = shadowRay.eye + shadowRay.direction * hitSphere.t;
 
 			// makes sure we are not shadowing ourselves
-			if (abs(shadowHit(0) - hitPt(0)) < .1 && abs(shadowHit(1) - hitPt(1)) < .1 && abs(shadowHit(2) - hitPt(2)) < .1) {
+			if (abs(shadowHit(0) - hitPt(0)) < 0.1 && abs(shadowHit(1) - hitPt(1)) < 0.1 && abs(shadowHit(2) - hitPt(2)) < 0.1) {
 				isShadow = false;
 			}
 		}

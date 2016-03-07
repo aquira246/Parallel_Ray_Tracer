@@ -30,74 +30,107 @@
 
 using namespace std;
 
-//bool keyToggles[256] = {false};
-
-//Eigen::Vector3f LightPos;
-//Eigen::Vector3f LightDir;
 Eigen::Vector3f backgroundCol;
 Picture pic;
 Scene scene;
-//std::vector<Sphere> allSpheres;
-//std::vector<Triangle> allTriangles;
 
 Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
 Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
 
-int width = 1600;
-int height = 1600;
+int width = 400;
+int height = 400;
+float aspectRatio;
 
 void InitCamera() {
-	CameraPos = Eigen::Vector3f(0,0,0);
-	CameraDirection = Eigen::Vector3f(0,0,1);
+	CameraPos = Eigen::Vector3f(0,0,10);
+	CameraDirection = normalize(Eigen::Vector3f(0,0,-1));
 	CameraRight = cross(CameraDirection, Up);
 	CameraUp = cross(CameraRight, CameraDirection);
 }
 
-void InitCamera(Camera camera) {
+void InitCamera(Camera &camera) {
 	CameraPos = camera.position;
-	CameraDirection = camera.direction;
+	CameraDirection = normalize(camera.look_at - camera.position);
 	CameraRight = camera.right;
 	CameraUp = camera.up;
+   #ifdef DEBUG
+   cout << "Camera:\n" << "\tPOSITION: "
+        << CameraPos[0] << ", " << CameraPos[1] << ", " << CameraPos[2] << endl
+        << "\tDIRECTION: "
+        << CameraDirection[0] << ", " << CameraDirection[1] << ", "
+        << CameraDirection[2] << endl
+        << "\tRIGHT: "
+        << CameraRight[0] << ", " << CameraRight[1] << ", "
+        << CameraRight[2] << endl
+        << "\tUP: "
+        << CameraUp[0] << ", " << CameraUp[1] << ", " << CameraUp[2] << endl;
+   #endif
 }
 
 void loadScene()
 {
 	pic = Picture(width, height);
+   aspectRatio = (double) width / height;
+   cout << "ASP: " << aspectRatio << endl;
 	backgroundCol = Eigen::Vector3f(0,0,0);
-	InitCamera(scene.camera);   
+	InitCamera(scene.camera);
 }
 
 Ray ComputeCameraRay(int i, int j) {
-	double normalized_i = (i/(float)pic.width) - .5;
-	double normalized_j = (j/(float)pic.height) - .5;
+   float normalized_i, normalized_j;
+   if(aspectRatio > 1) {
+      normalized_i = ((i/(float)pic.width) - 0.5) * aspectRatio;
+      normalized_j = (j/(float)pic.height) - 0.5;
+   }
+   else {
+      normalized_i = (i/(float)pic.width) - 0.5;
+      normalized_j = ((j/(float)pic.height) - 0.5) / aspectRatio;
+   }
 
-	Eigen::Vector3f imagePoint = normalized_i * CameraRight + 
+   Eigen::Vector3f imagePoint = normalized_i * CameraRight + 
 								normalized_j * CameraUp +
 								CameraPos + CameraDirection;
-	
-	Eigen::Vector3f ray_direction = imagePoint - CameraPos;
 
-	return Ray(CameraPos, ray_direction);
+   Eigen::Vector3f ray_direction = imagePoint - CameraPos;
+
+   return Ray(CameraPos, ray_direction);
 }
 
 void SetupPicture() {
-	Ray laser;
+   Ray laser;
 
-	for (int x = 0; x < width; ++x)
-	{
-		for (int y = 0; y < height; ++y)
-		{
-			laser = ComputeCameraRay(x, y);
-			hit_t hitSphere = scene.checkHit(laser);
-			if (hitSphere.isHit) {
-					pic.setPixel(x, y, scene.ComputeLighting(laser, hitSphere, false));
+   #ifdef DEBUG
+   int noHitCount = 0;
+   cout << "Triangles: " << scene.triangles.size() << endl;
+   cout << "Spheres: " << scene.spheres.size() << endl;
+   cout << "Lights: " << scene.lights.size() << endl;
+   #endif
+
+   for (int x = 0; x < width; ++x)
+   {
+      for (int y = 0; y < height; ++y)
+      {
+         laser = ComputeCameraRay(x, y);
+         hit_t hitShape = scene.checkHit(laser);
+         if (hitShape.isHit) {
+            pic.setPixel(x, y, scene.ComputeLighting(laser, hitShape, false));
 			} else {
-				pic.setPixel(x, y, Pixel(.5, .5, .5));
-			}
-		}
-	}
+            pic.setPixel(x, y, Pixel(.5, .5, .5));
+            #ifdef DEBUG
+            ++noHitCount;
+            #endif
+         }
+         #ifdef DEBUG
+         cout << "Pixel: " << x * height + y << "\r";
+         #endif
+      }
+   }
+
+   #ifdef DEBUG
+   cout << "Rays with no hit: " << noHitCount << endl;
+   #endif
 }
 
 void PrintPicture() {

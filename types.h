@@ -19,7 +19,7 @@ typedef Vec3f {
 */
 typedef struct Camera {
    Eigen::Vector3f position;
-   Eigen::Vector3f direction;
+   Eigen::Vector3f look_at;
    Eigen::Vector3f right;
    Eigen::Vector3f up;
 } Camera;

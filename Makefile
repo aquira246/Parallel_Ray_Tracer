@@ -20,6 +20,10 @@ ifdef NOPHI
 	CFLAGS += -D NOPHI
 endif
 
+ifdef DEBUG
+	CFLAGS += -D DEBUG
+endif
+
 all: $(OBJECT)
 	$(CC) -g $(CFLAGS) $(INC) $(OBJECT) $(LIB) -o rt
 

@@ -272,7 +272,7 @@ void ParseCamera(Camera &camera) {
          ParseVector(camera.up);
          break;
       case T_LOOK_AT:
-         ParseVector(camera.direction);
+         ParseVector(camera.look_at);
          break;
       case T_ANGLE:
          angle = M_PI * ParseDouble() / 180.0;
@@ -343,8 +343,6 @@ void ParsePlane() {
 
 void ParseLightSource(vector<Light> &lights) {
    Light light;
-   //color_t c;
-   //Vector3f pos;
    ParseLeftCurly();
 
    ParseVector(light.location);

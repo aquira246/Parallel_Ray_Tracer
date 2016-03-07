@@ -46,26 +46,21 @@ Pixel Picture::getPixel(int x, int y)
 
 void Picture::resize(int w, int h)
 {
-	int oldWidth = width;
-	int oldHeight = height;
+   int oldSize = width * height;
+   int newSize = w * h;
 	width = w;
 	height = h;
-	Pixels.resize(width*height);
+	Pixels.resize(newSize);
 
-	for (int x = 0; x < width; ++x)
-	{
-		for (int y = 0; y < height; ++y)
-		{
-			if (x >= oldWidth && y >= oldHeight) {
-				Pixels[getIdx(x, y)] = Pixel();
-			}
-		}
-	}
+   for(int i = oldSize; i < newSize; ++i)
+   {
+      Pixels[i] = Pixel();
+   } 
 }
 
 int Picture::getIdx(int x, int y) {
 	int ret = 0;
-	ret = x*width + y;
+	ret = x + y * width;
 	return ret;
 }
 

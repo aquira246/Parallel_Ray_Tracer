@@ -13,7 +13,7 @@ class Pixel
 		float r, g, b;
 		void Average(float newR, float newG, float newB);
 		void AveragePx(Pixel other);
-		bool HasColor() ;
+		bool HasColor();
 
 	private:
 };
