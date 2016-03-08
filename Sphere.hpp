@@ -22,6 +22,7 @@ class Sphere: public Shape
 		
 		// Shape has a center and radius, the only components of a sphere
 
+      virtual Eigen::Vector3f GetNormal(Eigen::Vector3f hitPt);
 		float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
 
 	private:

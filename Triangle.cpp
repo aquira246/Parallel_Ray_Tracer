@@ -40,6 +40,10 @@ void Triangle::Initialize() {
    center += a;
 }
 
+Eigen::Vector3f Triangle::GetNormal(Eigen::Vector3f hitPt) {
+   return normal;
+}
+
 // TODO! RETURN UV SO YOU CAN INTERPOLATE COLORS
 //  u * cols[0] + v * cols[1] + (1 - u - v) * cols[2];
 // http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution

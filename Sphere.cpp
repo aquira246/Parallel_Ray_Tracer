@@ -26,6 +26,10 @@ Sphere::~Sphere(){
 
 }
 
+Eigen::Vector3f Sphere::GetNormal(Eigen::Vector3f hitPt) {
+   return normalize(hitPt - center);
+}
+
 float Sphere::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 	Eigen::Vector3f dist = eye - center;
 

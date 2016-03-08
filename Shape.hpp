@@ -35,6 +35,11 @@ class Shape
         void SetMaterialByNum(int colorNum);
         void SetMaterial(std::string colorName);
 
+        virtual Eigen::Vector3f GetNormal(Eigen::Vector3f hitPt) {
+         std::cout << "In Shape GetNormal()...\n";
+         return Eigen::Vector3f(); 
+        }
+
         float checkHit(Ray ray) {
             return checkHit(ray.eye, ray.direction);
         }

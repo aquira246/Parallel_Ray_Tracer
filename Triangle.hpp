@@ -18,6 +18,7 @@ class Triangle: public Shape
       Triangle(Eigen::Vector3f pta, Eigen::Vector3f ptb, Eigen::Vector3f ptc);
       ~Triangle();
 
+      virtual Eigen::Vector3f GetNormal(Eigen::Vector3f hitPt);
       float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
 
    protected:
