@@ -98,13 +98,14 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			Eigen::Vector3f shadowHit = shadowRay.eye + shadowRay.direction * hitSphere.t;
 
 			// makes sure we are not shadowing ourselves
-			if (abs(shadowHit(0) - hitPt(0)) < 0.1 && abs(shadowHit(1) - hitPt(1)) < 0.1 && abs(shadowHit(2) - hitPt(2)) < 0.1) {
+			if (fabs(shadowHit[0] - hitPt[0]) < 0.1 && fabs(shadowHit[1] - hitPt[1]) < 0.1 && fabs(shadowHit[2] - hitPt[2]) < 0.1) {
 				inShadow = false;
 			}
 		}
 
 		if (!inShadow) {
-			Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
+			//Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
+			Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
 
 			Eigen::Vector3f l;
 			l = (lights[i].location - hitPt);

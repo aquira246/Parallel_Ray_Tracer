@@ -12,11 +12,7 @@ typedef struct color_struct {
    double b;
    double f; // "filter" or "alpha"
 } color_t;
-/*
-typedef Vec3f {
-   float data[3];
-} Vec3f;
-*/
+
 typedef struct Camera {
    Eigen::Vector3f position;
    Eigen::Vector3f look_at;

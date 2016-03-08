@@ -12,13 +12,7 @@ Shape::~Shape(){
 }
 
 void Shape::SetMaterialToMat(Material newMat) {
-   mat = newMat;/*
-   mat.rgb = newMat.rgb;
-   mat.ambient = newMat.ambient;
-   mat.diffuse = newMat.diffuse;
-   mat.specular = newMat.specular;
-   mat.roughness = newMat.roughness;
-   mat.shine = newMat.shine;*/
+   mat = newMat;
 }
 
 void Shape::SetMaterialByNum(int colorNum) {

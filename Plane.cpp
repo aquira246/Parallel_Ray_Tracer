@@ -22,6 +22,10 @@ Plane::~Plane(){
 
 }
 
+Eigen::Vector3f Plane::GetNormal(Eigen::Vector3f hitPt) {
+   return normal;
+}
+
 float Plane::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
     
     float t = -1;

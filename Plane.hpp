@@ -20,6 +20,7 @@ class Plane: public Shape
 
         Eigen::Vector3f normal;
         
+        virtual Eigen::Vector3f GetNormal(Eigen::Vector3f hitPt);
         // Shape has a center and radius, the only components of a Plane
         float checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir);
 
