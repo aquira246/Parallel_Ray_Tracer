@@ -123,13 +123,13 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			hold = max(dot(h, n), 0.0f);
 
 			Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * rgb;
-			color += colorD*hitResult.hitShape->mat.diffuse + colorS*hitResult.hitShape->mat.specular;
+			Eigen::Vector3f toAdd = colorD*hitResult.hitShape->mat.diffuse + colorS*hitResult.hitShape->mat.specular;
+			toAdd[0] *= lights[i].color.r;
+			toAdd[1] *= lights[i].color.g;
+			toAdd[2] *= lights[i].color.b;
+			color = color + toAdd;
 		}
 	}
-
-	color *= lights[i].color.r;
-	color *= lights[i].color.g;
-	color *= lights[i].color.b;
 
 	return Pixel(color(0), color(1), color(2));
 }
