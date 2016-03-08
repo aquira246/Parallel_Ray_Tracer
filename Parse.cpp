@@ -14,9 +14,9 @@
 #include "types.h"
 #include "Triangle.hpp"
 #include "Sphere.hpp"
-//#include "Plane.hpp"
+#include "Plane.hpp"
 
- #include "Parse.hpp"
+#include "Parse.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -180,7 +180,7 @@ void ParseFinish(Finish &finish) {
   } 
 }
 
-void PrintFinish(struct Finish &finish) { 
+void PrintFinish(Finish &finish) { 
   printf("\tfinish { ambient %.3g diffuse %.3g phong %.3g phong_size %.3g reflection %.3g metallic %d }\n", 
          finish.ambient, finish.diffuse, 
          finish.phong, finish.phong_size, 
@@ -199,7 +199,7 @@ void ParseInterior(double interior) {
 }
 
 
-void InitModifiers(struct ModifierStruct &modifiers) { 
+void InitModifiers(ModifierStruct &modifiers) { 
   modifiers.pigment.r = 0;
   modifiers.pigment.g = 0;
   modifiers.pigment.b = 0;
@@ -214,28 +214,6 @@ void InitModifiers(struct ModifierStruct &modifiers) {
   modifiers.interior = 1.0; 
 }
 
-
-void ParseModifiers(ModifierStruct &modifiers) { 
-  while(1) { 
-    GetToken();
-    switch(Token.id) { 
-    case T_SCALE:
-    case T_ROTATE:
-    case T_TRANSLATE:
-    case T_PIGMENT:
-      ParsePigment(modifiers.pigment);
-      break;
-    case T_FINISH:
-      ParseFinish(modifiers.finish);
-      break;
-    case T_INTERIOR:
-      ParseInterior(modifiers.interior);
-      break;      
-    default: UngetToken(); return;
-    }
-  }
-}
-
 void PrintModifiers(ModifierStruct &modifiers) {
   PrintPigment(modifiers.pigment);
   printf("\n"); 
@@ -243,18 +221,42 @@ void PrintModifiers(ModifierStruct &modifiers) {
   printf("\tinterior { ior %.3g }\n", modifiers.interior);
 }
 
+void ParseModifiers(Material &mat) {
+   ModifierStruct modifiers;
+
+   while(1) { 
+      GetToken();
+      switch(Token.id) { 
+      case T_SCALE:
+      case T_ROTATE:
+      case T_TRANSLATE:
+      case T_PIGMENT:
+         ParsePigment(modifiers.pigment);
+         break;
+      case T_FINISH:
+         ParseFinish(modifiers.finish);
+         break;
+      case T_INTERIOR:
+         ParseInterior(modifiers.interior);
+         break;      
+      default: UngetToken();
+         mat.rgb = Eigen::Vector3f(modifiers.pigment.r,
+                             modifiers.pigment.g,
+                             modifiers.pigment.b);
+         mat.ambient = modifiers.finish.ambient;
+         mat.diffuse = modifiers.finish.diffuse;
+         mat.specular = modifiers.finish.specular;
+         mat.roughness = modifiers.finish.roughness;
+         mat.shine = modifiers.finish.roughness;
+         return;
+      }
+   }
+
+}
 
 void ParseCamera(Camera &camera) { 
-   //Vector3f location, right, up, look_at; 
    double angle;
    int done = FALSE;
-
-   // default values
-   //location = Vector3f(0.0, 0.0, 0.0);   
-   //look_at = Vector3f(0.0, 0.0, 1.0);
-   //right = Vector3f(1.0, 0.0, 0.0);
-   //up = Vector3f(0.0, 1.0, 0.0);
-   //angle = 60.0 * M_PI / 180.0;
 
    ParseLeftCurly();
 
@@ -290,9 +292,8 @@ void ParseCamera(Camera &camera) {
 void ParseSphere(vector<Sphere> &spheres) { 
    Vector3f center; 
    double radius; 
-   ModifierStruct modifiers;
+   Material mat;
 
-   InitModifiers(modifiers);
    center = Vector3f(0, 0, 0);
    radius = 1.0;
 
@@ -300,16 +301,16 @@ void ParseSphere(vector<Sphere> &spheres) {
    ParseVector(center);
    ParseComma();
    radius = ParseDouble();
-   ParseModifiers(modifiers);
+   ParseModifiers(mat);
    ParseRightCurly();
 
    spheres.push_back(Sphere(center, radius));
+   spheres.back().SetMaterialToMat(mat);
 }
 
 void ParseTriangle(vector<Triangle> &triangles) { 
    Vector3f vert1, vert2, vert3;
-   ModifierStruct modifiers;
-   InitModifiers(modifiers);
+   Material mat;
 
    ParseLeftCurly();
 
@@ -318,27 +319,30 @@ void ParseTriangle(vector<Triangle> &triangles) {
    ParseVector(vert2);
    ParseComma();
    ParseVector(vert3);
-   ParseModifiers(modifiers);
+   ParseModifiers(mat);
 
    ParseRightCurly();
 
    triangles.push_back(Triangle(vert1, vert2, vert3));
+   triangles.back().SetMaterialToMat(mat);
 }
 
-void ParsePlane() { 
-   Vector3f plane;
-   float radius;
-   ModifierStruct modifiers;
-   InitModifiers(modifiers);
+void ParsePlane(vector<Plane> &planes) { 
+   Eigen::Vector3f normal;
+   float dist;
+   Material mat;
 
    ParseLeftCurly();
 
-   ParseVector(plane);
+   ParseVector(normal);
    ParseComma();
-   radius = (float) ParseDouble();
-   ParseModifiers(modifiers);
+   dist = (float) ParseDouble();
+   ParseModifiers(mat);
 
    ParseRightCurly();
+
+   planes.push_back(Plane(Eigen::Vector3f(0,dist,0), -normal, -1));
+   planes.back().SetMaterialToMat(mat);
 }
 
 void ParseLightSource(vector<Light> &lights) {
@@ -353,6 +357,7 @@ void ParseLightSource(vector<Light> &lights) {
    ParseRightCurly();
 
    lights.push_back(light);
+   cout << "LightLoc: " << light.location[0] << " " << light.location[1] << light.location[2] << endl;
 } 
 
 void ParseGlobalSettings() { 
@@ -391,7 +396,7 @@ int Parse(FILE* infile, Scene &scene) {
             ParseSphere(scene.spheres);
             break;
          case T_PLANE:
-            ParsePlane();//TODO
+            ParsePlane(scene.planes);
             break;
          case T_LIGHT_SOURCE:
             ParseLightSource(scene.lights);

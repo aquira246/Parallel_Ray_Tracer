@@ -39,8 +39,8 @@ Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
 
-int width = 800;
-int height = 800;
+int width = 500;
+int height = 500;
 float aspectRatio;
 
 void InitCamera() {
@@ -71,11 +71,10 @@ void InitCamera(Camera &camera) {
 
 void loadScene()
 {
-	pic = Picture(width, height);
+   pic = Picture(width, height);
    aspectRatio = (double) width / height;
-   cout << "ASP: " << aspectRatio << endl;
-	backgroundCol = Eigen::Vector3f(.5,.5,.5);
-	InitCamera(scene.camera);
+   backgroundCol = Eigen::Vector3f(0.5,0.5,0.5);
+   InitCamera(scene.camera);
 }
 
 Ray ComputeCameraRay(int i, int j) {
@@ -105,6 +104,7 @@ void SetupPicture() {
    int noHitCount = 0;
    cout << "Triangles: " << scene.triangles.size() << endl;
    cout << "Spheres: " << scene.spheres.size() << endl;
+   cout << "Planes: " << scene.planes.size() << endl;
    cout << "Lights: " << scene.lights.size() << endl;
    #endif
 

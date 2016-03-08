@@ -7,6 +7,7 @@
 #include "Shape.hpp"
 #include "Triangle.hpp"
 #include "Sphere.hpp"
+#include "Plane.hpp"
 #include "types.h"
 #include "Pixel.hpp"
 //#include ""
@@ -29,7 +30,7 @@ class Scene
 
 		std::vector<Triangle> triangles;
 		std::vector<Sphere> spheres;
-		//      std::vector<Plane> planes;
+		 std::vector<Plane> planes;
 
 		Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print);
 	private:

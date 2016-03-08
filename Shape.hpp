@@ -17,7 +17,7 @@ struct Material
 {
    Eigen::Vector3f rgb;
    float ambient, diffuse, specular, roughness, shine;
-};
+} typedef Material;
 
 
 class Shape

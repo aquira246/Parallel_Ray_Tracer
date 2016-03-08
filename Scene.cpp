@@ -21,6 +21,22 @@ hit_t Scene::checkHit(Ray testRay) {
 	bool hit = false;
 	float bestT = 100;
 
+	for (unsigned int i = 0; i < planes.size(); ++i)
+	{
+		float t = planes[i].checkHit(testRay.eye, testRay.direction);
+		if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
+			hitShape = &(planes[i]);
+			bestT = t;
+			hit = true;
+         #ifdef DEBUG2
+         cout << "New best hit, position of shape: "
+              << (*hitShape).center[0] << ", "
+              << (*hitShape).center[1] << ", "
+              << (*hitShape).center[2] << endl;
+         #endif
+		}
+	}
+
 	for (unsigned int i = 0; i < triangles.size(); ++i)
 	{
 		float t = triangles[i].checkHit(testRay.eye, testRay.direction);
@@ -28,7 +44,7 @@ hit_t Scene::checkHit(Ray testRay) {
 			hitShape = &(triangles[i]);
 			bestT = t;
 			hit = true;
-         #ifdef DEBUG
+         #ifdef DEBUG2
          cout << "New best hit, position of shape: "
               << (*hitShape).center[0] << ", "
               << (*hitShape).center[1] << ", "
@@ -44,7 +60,7 @@ hit_t Scene::checkHit(Ray testRay) {
 			hitShape = &(spheres[i]);
 			bestT = t;
 			hit = true;
-         #ifdef DEBUG
+         #ifdef DEBUG2
          cout << "New best hit, position of shape: "
               << (*hitShape).center[0] << ", "
               << (*hitShape).center[1] << ", "
