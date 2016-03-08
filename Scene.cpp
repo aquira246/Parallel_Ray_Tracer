@@ -67,7 +67,7 @@ hit_t Scene::checkHit(Ray testRay) {
 
 Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
-	bool notShadowed = false;
+	bool inShadow = true;
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
 	Eigen::Vector3f color= ambient;
@@ -75,7 +75,7 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
 	{
-		notShadowed = false;
+		inShadow = true;
 		Ray shadowRay = Ray(lights[i].location, hitPt - lights[i].location);
 		hit_t hitSphere = checkHit(shadowRay);
 		if (hitSphere.isHit) {
@@ -83,22 +83,25 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 
 			// makes sure we are not shadowing ourselves
 			if (abs(shadowHit(0) - hitPt(0)) < 0.1 && abs(shadowHit(1) - hitPt(1)) < 0.1 && abs(shadowHit(2) - hitPt(2)) < 0.1) {
-				notShadowed = true;
+				inShadow = false;
 			}
 		}
 
-		if (notShadowed) {
+		if (!inShadow) {
 			Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
 
 			Eigen::Vector3f l;
 			l = (lights[i].location - hitPt);
-			l = normalize(l);
+			l.normalize();
+			//l = normalize(l);
 
 			Eigen::Vector3f v = -hitPt;
-			v = normalize(v);
+			v.normalize();
+			//v = normalize(v);
 
 			Eigen::Vector3f h = l + v;
-			h = normalize(h);
+			h.normalize();
+			//h = normalize(h);
 
 			double hold = max(dot(l, n), 0.0f);
 
@@ -107,9 +110,11 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			hold = max(dot(h, n), 0.0f);
 
 			Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * rgb;
-			color = color + 
-					(colorD*hitResult.hitShape->mat.diffuse 
-					+ colorS*hitResult.hitShape->mat.specular);
+			Eigen::Vector3f toAdd = colorD*hitResult.hitShape->mat.diffuse + colorS*hitResult.hitShape->mat.specular;
+			toAdd[0] *= lights[i].color.r;
+			toAdd[1] *= lights[i].color.g;
+			toAdd[2] *= lights[i].color.b;
+			color = color + toAdd;
 		}
 	}
 
