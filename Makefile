@@ -42,10 +42,12 @@ all: $(OBJECT)
 %.cu: %.h
 	touch $@
 
-run:
+ball:
 	./rt resources/bunny_small.pov
 tri:
 	./rt resources/bunny_small_tris.pov
+good:
+	./rt resources/simp_cam.pov
 clean:
 	rm -f *~ *.o a.out rt
 clear: $(OBJECT)
