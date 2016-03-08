@@ -29,7 +29,7 @@ Eigen::Vector3f cross(Eigen::Vector3f U, Eigen::Vector3f V) {
    float x = U[1] * V[2] - U[2] * V[1];
    float y = U[2] * V[0] - U[0] * V[2];
    float z = U[0] * V[1] - U[1] * V[0];
-   return normalize(Eigen::Vector3f(x,y,z)); 
+   return Eigen::Vector3f(x,y,z); 
 }
 
 Vec3 cross(Vec3 U, Vec3 V) {
@@ -37,7 +37,7 @@ Vec3 cross(Vec3 U, Vec3 V) {
    ret.x = U.y * V.z - U.z * V.y;
    ret.y = U.z * V.x - U.x * V.z;
    ret.z = U.x * V.y - U.y * V.x;
-   return normalize(ret); 
+   return ret; 
 }
 
 float dot(Eigen::Vector3f U, Eigen::Vector3f V) {

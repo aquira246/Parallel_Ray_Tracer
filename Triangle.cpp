@@ -78,7 +78,7 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 
    Eigen::Vector3f ab = b - a;
    Eigen::Vector3f ac = c - a;
-   Eigen::Vector3f pvec = dir.cross(ac);
+   Eigen::Vector3f pvec = cross(dir, ac);
    float det = dot(ab, pvec);
    #ifdef CULLING
    // if the determinant is negative the triangle is backfacing
@@ -94,7 +94,7 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    u = dot(tvec, pvec) * invDet;
    if (u < 0 || u > 1) return 0;
 
-   Eigen::Vector3f qvec = tvec.cross(ab);
+   Eigen::Vector3f qvec = cross(tvec, ab);
    v = dot(dir, qvec) * invDet;
    if (v < 0 || u + v > 1) return 0;
 
