@@ -113,14 +113,5 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		}
 	}
 
-	// if (print) {
-	// 	cout << "color: " << color << endl << endl;
-	// 	cout << "ambient: " << ambient << endl << endl;
-	// 	cout << "diffuse: " << colorD << endl << endl;
-	// 	cout << "specular: " << colorS << endl << endl;
-	// 	cout << "normals: " << n << endl << endl;
-	// 	cout << "Hit Point " << hitPt << endl << endl << "Center " << hitResult.hitShape->center<<endl << endl;
-	// }
-
 	return Pixel(color(0), color(1), color(2));
 }

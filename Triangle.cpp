@@ -44,6 +44,8 @@ void Triangle::Initialize() {
 //  u * cols[0] + v * cols[1] + (1 - u - v) * cols[2];
 // http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
 float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
+   double u, v, t;
+
    // first check for circumsphere hit
    Eigen::Vector3f dist = eye - center;
 
@@ -59,9 +61,9 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
       result = 0;
    }
 
-	if (quad(0) == 1) {
+   if (quad(0) == 1) {
       result = quad(1);
-	}
+   }
 
    if (fabs(quad(1)) <= fabs(quad(2))) {
       result = quad(1);
@@ -74,33 +76,29 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
       return 0;
    }
 
-   // then check triangle hit
    Eigen::Vector3f ab = b - a;
    Eigen::Vector3f ac = c - a;
-
-   Eigen::Vector3f pvec = cross(dir, ac);
+   Eigen::Vector3f pvec = dir.cross(ac);
    float det = dot(ab, pvec);
-
    #ifdef CULLING
-   // if the determinant is negative the triangle is backfacing and can be culled
+   // if the determinant is negative the triangle is backfacing
    // if the determinant is close to 0, the ray misses the triangle
    if (det < kEpsilon) return 0;
    #else
    // ray and triangle are parallel if det is close to 0
    if (fabs(det) < kEpsilon) return 0;
    #endif
-
    float invDet = 1 / det;
 
    Eigen::Vector3f tvec = eye - a;
-   float u = dot(tvec, pvec) * invDet;
+   u = dot(tvec, pvec) * invDet;
    if (u < 0 || u > 1) return 0;
 
-   Eigen::Vector3f qvec = cross(tvec, ab);
-   float v = dot(dir, qvec) * invDet;
+   Eigen::Vector3f qvec = tvec.cross(ab);
+   v = dot(dir, qvec) * invDet;
    if (v < 0 || u + v > 1) return 0;
 
-   float t = dot(ac, qvec) * invDet;
+   t = dot(ac, qvec) * invDet;
 
    return t;
-} 
+}

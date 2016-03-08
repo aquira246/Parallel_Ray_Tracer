@@ -39,8 +39,8 @@ Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
 
-int width = 400;
-int height = 400;
+int width = 800;
+int height = 800;
 float aspectRatio;
 
 void InitCamera() {

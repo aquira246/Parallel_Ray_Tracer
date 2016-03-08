@@ -44,6 +44,8 @@ all: $(OBJECT)
 
 run:
 	./rt resources/bunny_small.pov
+tri:
+	./rt resources/bunny_small_tris.pov
 clean:
 	rm -f *~ *.o a.out rt
 clear: $(OBJECT)
