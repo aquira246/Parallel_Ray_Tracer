@@ -86,7 +86,7 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	bool inShadow = true;
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
-	Eigen::Vector3f color= ambient;
+	Eigen::Vector3f color = ambient;
 
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
@@ -111,7 +111,7 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			l.normalize();
 			//l = normalize(l);
 
-			Eigen::Vector3f v = -hitPt;
+			Eigen::Vector3f v = hitPt;
 			v.normalize();
 			//v = normalize(v);
 

@@ -357,7 +357,6 @@ void ParseLightSource(vector<Light> &lights) {
    ParseRightCurly();
 
    lights.push_back(light);
-   cout << "LightLoc: " << light.location[0] << " " << light.location[1] << light.location[2] << endl;
 } 
 
 void ParseGlobalSettings() { 
