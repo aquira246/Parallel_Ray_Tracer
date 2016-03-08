@@ -36,10 +36,10 @@ float Plane::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 
     if (t < 0) return -1;
 
-    if (rad < 0) {
+    if (radius < 0) {
         return t;
     }
-    
+
     Eigen::Vector3f p = eye + dir * t;
     Eigen::Vector3f v = p - center;
     float d2 = dot(v, v);
