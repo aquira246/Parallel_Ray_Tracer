@@ -67,15 +67,15 @@ hit_t Scene::checkHit(Ray testRay) {
 
 Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
-	bool isShadow = false;
-	Eigen::Vector3f color= Eigen::Vector3f(0,0,0);
+	bool notShadowed = false;
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
+	Eigen::Vector3f color= ambient;
 
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
 	{
-		isShadow = true;
+		notShadowed = false;
 		Ray shadowRay = Ray(lights[i].location, hitPt - lights[i].location);
 		hit_t hitSphere = checkHit(shadowRay);
 		if (hitSphere.isHit) {
@@ -83,11 +83,11 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 
 			// makes sure we are not shadowing ourselves
 			if (abs(shadowHit(0) - hitPt(0)) < 0.1 && abs(shadowHit(1) - hitPt(1)) < 0.1 && abs(shadowHit(2) - hitPt(2)) < 0.1) {
-				isShadow = false;
+				notShadowed = true;
 			}
 		}
 
-		if (!isShadow) {
+		if (notShadowed) {
 			Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
 
 			Eigen::Vector3f l;
@@ -112,7 +112,6 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 					+ colorS*hitResult.hitShape->mat.specular);
 		}
 	}
-	color += Eigen::Vector3f(ambient(0), ambient(1), ambient(2));
 
 	// if (print) {
 	// 	cout << "color: " << color << endl << endl;
