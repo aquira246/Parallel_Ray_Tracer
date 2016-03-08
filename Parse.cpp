@@ -328,20 +328,20 @@ void ParseTriangle(vector<Triangle> &triangles) {
 }
 
 void ParsePlane(vector<Plane> &planes) { 
-   Plane plane;
-   float radius;
+   Eigen::Vector3f normal;
+   float dist;
    Material mat;
 
    ParseLeftCurly();
 
-   ParseVector(plane.normal);
+   ParseVector(normal);
    ParseComma();
-   plane.radius = (float) ParseDouble();
+   dist = (float) ParseDouble();
    ParseModifiers(mat);
 
    ParseRightCurly();
 
-   planes.push_back(plane);
+   planes.push_back(Plane(Eigen::Vector3f(0,dist,0), -normal, -1));
    planes.back().SetMaterialToMat(mat);
 }
 
@@ -357,6 +357,7 @@ void ParseLightSource(vector<Light> &lights) {
    ParseRightCurly();
 
    lights.push_back(light);
+   cout << "LightLoc: " << light.location[0] << " " << light.location[1] << light.location[2] << endl;
 } 
 
 void ParseGlobalSettings() { 
