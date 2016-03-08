@@ -74,7 +74,7 @@ void loadScene()
 	pic = Picture(width, height);
    aspectRatio = (double) width / height;
    cout << "ASP: " << aspectRatio << endl;
-	backgroundCol = Eigen::Vector3f(0,0,0);
+	backgroundCol = Eigen::Vector3f(.5,.5,.5);
 	InitCamera(scene.camera);
 }
 
@@ -117,7 +117,7 @@ void SetupPicture() {
          if (hitShape.isHit) {
             pic.setPixel(x, y, scene.ComputeLighting(laser, hitShape, false));
 			} else {
-            pic.setPixel(x, y, Pixel(.5, .5, .5));
+            pic.setPixel(x, y, Pixel(backgroundCol[0], backgroundCol[1], backgroundCol[2]));
             #ifdef DEBUG
             ++noHitCount;
             #endif
