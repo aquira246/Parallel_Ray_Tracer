@@ -19,7 +19,7 @@ Scene::~Scene() {
 hit_t Scene::checkHit(Ray testRay) {
 	Shape* hitShape = NULL;
 	bool hit = false;
-	float bestT = 100;
+	float bestT = 10000;
 
 	for (unsigned int i = 0; i < planes.size(); ++i)
 	{
@@ -108,16 +108,13 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 
 			Eigen::Vector3f l;
 			l = (lights[i].location - hitPt);
-			l.normalize();
-			//l = normalize(l);
+			l = normalize(l);
 
 			Eigen::Vector3f v = hitPt;
-			v.normalize();
-			//v = normalize(v);
+			v = normalize(v);
 
 			Eigen::Vector3f h = l + v;
-			h.normalize();
-			//h = normalize(h);
+			h = normalize(h);
 
 			double hold = max(dot(l, n), 0.0f);
 
