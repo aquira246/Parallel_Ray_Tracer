@@ -3,8 +3,8 @@
 using namespace std;
 
 Shape::Shape() {
-    SetMaterialByNum(rand() % NUM_MATS);
-    center = Eigen::Vector3f(0,0,0);
+    //SetMaterialByNum(rand() % NUM_MATS);
+    //center = Eigen::Vector3f(0,0,0);
 }
 
 Shape::~Shape(){
@@ -12,7 +12,13 @@ Shape::~Shape(){
 }
 
 void Shape::SetMaterialToMat(Material newMat) {
-    mat = newMat;
+   mat = newMat;/*
+   mat.rgb = newMat.rgb;
+   mat.ambient = newMat.ambient;
+   mat.diffuse = newMat.diffuse;
+   mat.specular = newMat.specular;
+   mat.roughness = newMat.roughness;
+   mat.shine = newMat.shine;*/
 }
 
 void Shape::SetMaterialByNum(int colorNum) {

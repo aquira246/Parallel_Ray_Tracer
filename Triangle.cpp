@@ -5,7 +5,7 @@ using namespace std;
 constexpr float kEpsilon = 1e-8; 
 
 Triangle::Triangle() {
-   SetMaterialByNum(rand() % NUM_MATS);
+   //SetMaterialByNum(rand() % NUM_MATS);
    a = Eigen::Vector3f();
    b = Eigen::Vector3f();
    c = Eigen::Vector3f();
@@ -13,7 +13,7 @@ Triangle::Triangle() {
 }
 
 Triangle::Triangle(Eigen::Vector3f pta, Eigen::Vector3f ptb, Eigen::Vector3f ptc) {
-   SetMaterialByNum(rand() % NUM_MATS);
+   //SetMaterialByNum(rand() % NUM_MATS);
    a = pta;
    b = ptb;
    c = ptc;
