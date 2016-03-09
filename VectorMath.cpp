@@ -24,7 +24,6 @@ Vec3 normalize(Vec3 V) {
 }
 
 
-// BROKEN!!! TODO
 Eigen::Vector3f cross(Eigen::Vector3f U, Eigen::Vector3f V) {
    float x = U[1] * V[2] - U[2] * V[1];
    float y = U[2] * V[0] - U[0] * V[2];

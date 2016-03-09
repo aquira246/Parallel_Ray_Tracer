@@ -87,44 +87,53 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
 	Eigen::Vector3f color = ambient;
+   Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
+	Eigen::Vector3f l = normalize(lights[i].location - hitPt);
 
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
 	{
 		inShadow = false;
 		Eigen::Vector3f shadowDir = normalize(lights[i].location - hitPt);
-		Ray shadowRay = Ray(hitPt + shadowDir*.001, shadowDir);
+		Ray shadowRay = Ray(hitPt + shadowDir * 0.001, shadowDir);
 		hit_t shadowHit = checkHit(shadowRay);
+
+      //need angle
+
 		if (shadowHit.isHit) {
 			if (shadowHit.hitShape != hitResult.hitShape)
 				inShadow = true;
 		}
 
-		if (!inShadow) {
-			Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
-
-			Eigen::Vector3f l;
-			l = (lights[i].location - hitPt);
-			l = normalize(l);
-
+		if (!inShadow && true) {
 			Eigen::Vector3f v = hitPt;
 			v = normalize(v);
 
-			Eigen::Vector3f h = l + v;
-			h = normalize(h);
+			Eigen::Vector3f r = -l + 2 * dot(n,l) * n;
+         r = normalize(r);
 
-			double hold = max(dot(l, n), 0.0f);
+         float specMult = pow(dot(v, r), hitResult.hitShape->mat.shine);
+         specMult = min(max(specMult, 0.0f), 1.0f);
+         Eigen::Vector3f colorS = specMult * rgb;
+         
+			//Eigen::Vector3f h = l + v;
+			//h = normalize(h) / 2;
 
+			float hold = min(max(dot(l, n), 0.0f), 1.0f);
 			Eigen::Vector3f colorD = hold * rgb;
 
-			hold = max(dot(h, n), 0.0f);
+			//hold = max(dot(h, n), 0.0f);
 
-			Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * rgb;
-			Eigen::Vector3f toAdd = colorD*hitResult.hitShape->mat.diffuse + colorS*hitResult.hitShape->mat.specular;
+			//Eigen::Vector3f colorS = pow(hold, hitResult.hitShape->mat.shine) * rgb;
+			Eigen::Vector3f toAdd = colorD * hitResult.hitShape->mat.diffuse
+                               + colorS * hitResult.hitShape->mat.specular;
 			toAdd[0] *= lights[i].color.r;
 			toAdd[1] *= lights[i].color.g;
 			toAdd[2] *= lights[i].color.b;
 			color = color + toAdd;
+         color[0] = min(max(color[0],0.0f),1.0f);
+         color[1] = min(max(color[1],0.0f),1.0f);
+         color[2] = min(max(color[2],0.0f),1.0f);
 		}
 	}
 

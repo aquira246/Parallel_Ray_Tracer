@@ -54,7 +54,7 @@ void InitCamera(Camera &camera) {
 	CameraPos = camera.position;
 	CameraDirection = normalize(camera.look_at - camera.position);
 	CameraRight = camera.right;
-	CameraUp = camera.up;
+	CameraUp = cross(CameraRight, CameraDirection);
    #ifdef DEBUG
    cout << "Camera:\n" << "\tPOSITION: "
         << CameraPos[0] << ", " << CameraPos[1] << ", " << CameraPos[2] << endl
