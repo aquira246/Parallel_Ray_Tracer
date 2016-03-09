@@ -91,16 +91,13 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
 	{
-		inShadow = true;
-		Ray shadowRay = Ray(lights[i].location, hitPt - lights[i].location);
-		hit_t hitSphere = checkHit(shadowRay);
-		if (hitSphere.isHit) {
-			Eigen::Vector3f shadowHit = shadowRay.eye + shadowRay.direction * hitSphere.t;
-
-			// makes sure we are not shadowing ourselves
-			if (fabs(shadowHit[0] - hitPt[0]) < 0.1 && fabs(shadowHit[1] - hitPt[1]) < 0.1 && fabs(shadowHit[2] - hitPt[2]) < 0.1) {
-				inShadow = false;
-			}
+		inShadow = false;
+		Eigen::Vector3f shadowDir = normalize(lights[i].location - hitPt);
+		Ray shadowRay = Ray(hitPt + shadowDir*.001, shadowDir);
+		hit_t shadowHit = checkHit(shadowRay);
+		if (shadowHit.isHit) {
+			if (shadowHit.hitShape != hitResult.hitShape)
+				inShadow = true;
 		}
 
 		if (!inShadow) {
