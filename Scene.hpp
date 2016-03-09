@@ -10,7 +10,6 @@
 #include "Plane.hpp"
 #include "types.h"
 #include "Pixel.hpp"
-//#include ""
 
 typedef struct hit_struct {
    Shape *hitShape;
@@ -27,10 +26,11 @@ class Scene
 		Camera camera;
 		std::vector<Light> lights;
 		hit_t checkHit(Ray testRay);
+		hit_t checkHit(Ray testRay, Shape *exclude);
 
 		std::vector<Triangle> triangles;
 		std::vector<Sphere> spheres;
-		 std::vector<Plane> planes;
+		std::vector<Plane> planes;
 
 		Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print);
 	private:
