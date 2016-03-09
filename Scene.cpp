@@ -101,7 +101,6 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		}
 
 		if (!inShadow) {
-			//Eigen::Vector3f n = (hitPt - hitResult.hitShape->center).normalized();
 			Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
 
 			Eigen::Vector3f l;
