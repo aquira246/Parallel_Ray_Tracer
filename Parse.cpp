@@ -210,6 +210,8 @@ void InitModifiers(ModifierStruct &modifiers) {
   modifiers.finish.phong      = 0.0;
   modifiers.finish.phong_size = 40.0;
   modifiers.finish.reflection = 0;
+  modifiers.finish.roughness  = 0.05;
+  modifiers.finish.specular   = 0.0;
 
   modifiers.interior = 1.0; 
 }
@@ -223,6 +225,7 @@ void PrintModifiers(ModifierStruct &modifiers) {
 
 void ParseModifiers(Material &mat) {
    ModifierStruct modifiers;
+   InitModifiers(modifiers);
 
    while(1) { 
       GetToken();
