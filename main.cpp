@@ -108,25 +108,27 @@ void SetupPicture() {
    cout << "Lights: " << scene.lights.size() << endl;
    #endif
 
-   for (int x = 0; x < width; ++x)
-   {
-      for (int y = 0; y < height; ++y)
-      {
-         laser = ComputeCameraRay(x, y);
-         hit_t hitShape = scene.checkHit(laser);
-         if (hitShape.isHit) {
-            pic.setPixel(x, y, scene.ComputeLighting(laser, hitShape, false));
+	for (int x = 0; x < width; ++x)
+	{
+		for (int y = 0; y < height; ++y)
+		{
+			laser = ComputeCameraRay(x, y);
+			hit_t hitShape = scene.checkHit(laser);
+			
+			if (hitShape.isHit) {
+				pic.setPixel(x, y, scene.ComputeLighting(laser, hitShape, false));
 			} else {
-            pic.setPixel(x, y, Pixel(backgroundCol[0], backgroundCol[1], backgroundCol[2]));
-            #ifdef DEBUG
-            ++noHitCount;
-            #endif
-         }
-         #ifdef DEBUG
-         cout << "Pixel: " << x * height + y << "\r";
-         #endif
-      }
-   }
+				pic.setPixel(x, y, Pixel(backgroundCol[0], backgroundCol[1], backgroundCol[2]));
+				#ifdef DEBUG
+				++noHitCount;
+				#endif
+			}
+			
+			#ifdef DEBUG
+			cout << "Pixel: " << x * height + y << "\r";
+			#endif
+		}
+	}
 
    #ifdef DEBUG
    cout << "Rays with no hit: " << noHitCount << endl;
