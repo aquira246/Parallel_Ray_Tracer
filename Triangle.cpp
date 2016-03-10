@@ -87,10 +87,10 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    #ifdef CULLING
    // if the determinant is negative the triangle is backfacing
    // if the determinant is close to 0, the ray misses the triangle
-   if (det < kEpsilon) return 0;
+   if (fabs(det) < kEpsilon) return 0;
    #else
    // ray and triangle are parallel if det is close to 0
-   if (fabs(det) < kEpsilon) return 0;
+   if (det < kEpsilon) return 0;
    #endif
    float invDet = 1 / det;
 
@@ -98,7 +98,7 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    u = dot(tvec, pvec) * invDet;
    if (u < 0 || u > 1) return 0;
 
-   Eigen::Vector3f qvec = cross(tvec, ab);
+   Eigen::Vector3f qvec = normalize(cross(tvec, ab));
    v = dot(dir, qvec) * invDet;
    if (v < 0 || u + v > 1) return 0;
 

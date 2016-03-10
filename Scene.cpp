@@ -154,7 +154,8 @@ hit_t Scene::checkHit(Ray testRay, Shape *exclude) {
 
 Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
-	bool inShadow = true;
+	Eigen::Vector3f viewVec = -laser.direction;
+	bool inShadow;
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
 	Eigen::Vector3f color = ambient;
@@ -165,34 +166,26 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	{
 		inShadow = false;
 		Eigen::Vector3f shadowDir = normalize(lights[i].location - hitPt);
-	   Eigen::Vector3f l = normalize(lights[i].location - hitPt);
+	   Eigen::Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
 		Ray shadowRay = Ray(hitPt, shadowDir);
 		hit_t shadowHit = checkHit(shadowRay, hitResult.hitShape);
-
-      //need angle
 
 		if (shadowHit.isHit) {
 			if (shadowHit.hitShape != hitResult.hitShape)
 				inShadow = true;
 		}
 
-		if (!inShadow) {
-			Eigen::Vector3f v = hitPt;
-			v = normalize(v);
+      if (!inShadow) {
+         Eigen::Vector3f v = hitPt;
+         v = normalize(v);
 
-			Eigen::Vector3f r = -l + 2 * dot(n,l) * n;
+         Eigen::Vector3f r = -l + 2 * dot(n,l) * n;
          r = normalize(r);
 
-      
-         Eigen::Vector3f colorS;
-         if(fabs(angle(l, n)) > 0.5f && false) {
-            float specMult = pow(dot(v, r), hitResult.hitShape->mat.shine);
-            specMult = min(max(specMult, 0.0f), 1.0f);
-            colorS = specMult * rgb;
-         }
-         else {
-            colorS = Eigen::Vector3f(0,0,0);
-         }
+         float specMult = max(dot(viewVec, r), 0.0f);
+         specMult = pow(specMult, hitResult.hitShape->mat.shine); //should be shine
+         
+         Eigen::Vector3f colorS = specMult * rgb;
 
 			float hold = min(max(dot(l, n), 0.0f), 1.0f);
 			Eigen::Vector3f colorD = hold * rgb;

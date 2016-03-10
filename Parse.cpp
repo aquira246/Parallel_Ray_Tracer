@@ -250,7 +250,7 @@ void ParseModifiers(Material &mat) {
          mat.diffuse = modifiers.finish.diffuse;
          mat.specular = modifiers.finish.specular;
          mat.roughness = modifiers.finish.roughness;
-         mat.shine = modifiers.finish.roughness;
+         mat.shine = 1 / modifiers.finish.roughness;
          return;
       }
    }
@@ -344,7 +344,7 @@ void ParsePlane(vector<Plane> &planes) {
 
    ParseRightCurly();
 
-   planes.push_back(Plane(Eigen::Vector3f(0,dist,0), -normal, -1));
+   planes.push_back(Plane(Eigen::Vector3f(0,dist,0), normal, -1));
    planes.back().SetMaterialToMat(mat);
 }
 

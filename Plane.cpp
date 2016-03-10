@@ -32,8 +32,8 @@ float Plane::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 
     // assuming vectors are all normalized
     float denom = dot(normal, dir);
-    
-    if (denom > kEpsilon) {
+
+    if (fabs(denom) > kEpsilon) {
         Eigen::Vector3f p0l0 = center - eye;
         t = dot(p0l0, normal) / denom;
     }
