@@ -1,10 +1,3 @@
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#endif
-#ifdef __unix__
-#include <GL/glut.h>
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

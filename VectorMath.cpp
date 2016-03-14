@@ -1,6 +1,8 @@
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <math.h>
 #include "VectorMath.hpp"
+#include "Vector3f.h"
+#include "VectorMath2.h"
 
 float magnitude(Eigen::Vector3f V) {
    return sqrt(V[0] * V[0] + V[1] * V[1] + V[2] * V[2]);
@@ -19,7 +21,7 @@ Eigen::Vector3f cross(Eigen::Vector3f U, Eigen::Vector3f V) {
 }
 
 float dot(Eigen::Vector3f U, Eigen::Vector3f V) {
-   float ret = U[0]*V[0] + U[1]*V[1] + U[2]*V[2];
+   float ret = U(0)*V(0) + U(1)*V(1) + U(2)*V(2);
    return ret;
 }
 

@@ -2,20 +2,32 @@
 #ifndef __VECTOR3F_H__
 #define __VECTOR3F_H__
 
+#include <cuda_runtime.h>
+
 class Vector3f
 {
    public:
+      __device__ __host__
       Vector3f();
+      __device__ __host__
       Vector3f(float a, float b, float c);
+      __device__ __host__
       ~Vector3f();
       
-      Vector3f Add(Vector3f other);
-      Vector3f Subtract(Vector3f other);
-      Vector3f Dot(Vector3f other);  
-      Vector3f Cross(Vector3f other);
-      Vector3f Magnitude();
+      __device__ __host__
+      Vector3f Add(Vector3f &other);
+      __device__ __host__
+      Vector3f Subtract(Vector3f &other);
+      __device__ __host__
+      Vector3f Dot(Vector3f &other);
+      __device__ __host__
+      Vector3f Cross(Vector3f &other);
+      __device__ __host__
+      float Magnitude();
+      __device__ __host__
       Vector3f Normalize();
 
+      __device__ __host__
       Vector3f operator+ (const Vector3f& other)
       {
          return Vector3f(this->data[0] + other.data[0],
@@ -23,14 +35,16 @@ class Vector3f
                          this->data[2] + other.data[2]);
       }
 
-      Vector3f operator- (const Vector3f& other);
+      __device__ __host__
+      Vector3f operator- (const Vector3f& other)
       {
          return Vector3f(this->data[0] - other.data[0],
                          this->data[1] - other.data[1],
                          this->data[2] - other.data[2]);
       }
 
-      int& operator[] (int index);
+      __device__ __host__
+      float& operator[] (int index)
       {
          return data[index]; // No OOB checking for efficiency, so be careful
       }

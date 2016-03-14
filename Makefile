@@ -1,10 +1,12 @@
 CU=nvcc
 CC=icpc
-CFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost
+CFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost -lcudadevrt -lcudart
+LDFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost -lcudadevrt -lcudart -o
 INC=-I$(EIGEN3_INCLUDE_DIR) -I./ -I/usr/local/cuda/include
-LIB=-DGL_GLEXT_PROTOTYPES -lglut -lGL -lGLU
+LIB=
+CUFLAGS=-rdc=true
 
-OBJECT = Image.o main.o Parse.o Picture.o Pixel.o Plane.o Ray.o Scene.o Sphere.o Shape.o Triangle.o Tokens.o VectorMath.o
+OBJECT = Image.o main.o Parse.o Picture.o Pixel.o Plane.o Ray.o Scene.o Sphere.o Shape.o Triangle.o Tokens.o VectorMath.o VectorMath2.o Vector3f.o
 
 ifdef NOCUDA
 	CFLAGS += -D NOCUDA
@@ -25,7 +27,7 @@ ifdef DEBUG
 endif
 
 all: $(OBJECT)
-	$(CC) -g $(CFLAGS) $(INC) $(OBJECT) $(LIB) -o rt
+	nvcc -g -ccbin=icpc -Xcompiler "$(LDFLAGS) $(INC) $(LIB)" $(OBJECT) -o rt
 
 %.o: %.cpp
 	$(CC) -g -c $< $(CFLAGS) $(INC) $(LIB)
@@ -37,7 +39,7 @@ all: $(OBJECT)
 	touch $@
 	
 %.o: %.cu
-	$(CU) -g -c -m64 $< $(LIBS) $(OPTS)
+	$(CU) -g -c -m64 $< $(LIBS) $(INC) $(CUFLAGS) $(OPTS)
 
 %.cu: %.h
 	touch $@
