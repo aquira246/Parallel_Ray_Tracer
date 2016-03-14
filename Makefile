@@ -6,7 +6,7 @@ INC=-I$(EIGEN3_INCLUDE_DIR) -I./ -I/usr/local/cuda/include
 LIB=
 CUFLAGS=-rdc=true
 
-OBJECT = Image.o main.o Parse.o Picture.o Pixel.o Plane.o Ray.o Scene.o Sphere.o Shape.o Triangle.o Tokens.o VectorMath.o VectorMath2.o Vector3f.o
+OBJECT = Image.o main.o Parse.o Picture.o Pixel.o Plane.o Ray.o Scene.o Sphere.o Shape.o Triangle.o Tokens.o VectorMath.o Vector3f.o
 
 ifdef NOCUDA
 	CFLAGS += -D NOCUDA
@@ -48,6 +48,8 @@ ball:
 	./rt resources/bunny_small.pov
 tri:
 	./rt resources/bunny_small_tris.pov
+triTest:
+	./rt resources/triTest.pov
 good:
 	./rt resources/simp_cam.pov
 good2:

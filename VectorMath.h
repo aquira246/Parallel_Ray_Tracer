@@ -1,5 +1,6 @@
-#ifndef __VECTOR_MATHTWO_H__
-#define __VECTOR_MATHTWO_H__
+#pragma once
+#ifndef __VECTOR_MATH_H__
+#define __VECTOR_MATH_H__
 
 #include <cuda_runtime.h>
 #include "Vector3f.h"

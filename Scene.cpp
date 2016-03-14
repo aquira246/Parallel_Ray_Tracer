@@ -153,20 +153,20 @@ hit_t Scene::checkHit(Ray testRay, Shape *exclude) {
 }
 
 Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
-	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
-	Eigen::Vector3f viewVec = -laser.direction;
+	Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
+	Vector3f viewVec = -laser.direction;
 	bool inShadow;
-	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
-	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
-	Eigen::Vector3f color = ambient;
-   Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
+	Vector3f rgb = hitResult.hitShape->mat.rgb;
+	Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
+	Vector3f color = ambient;
+   Vector3f n = hitResult.hitShape->GetNormal(hitPt);
 
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
 	{
 		inShadow = false;
-		Eigen::Vector3f shadowDir = normalize(lights[i].location - hitPt);
-	   Eigen::Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
+		Vector3f shadowDir = normalize(lights[i].location - hitPt);
+	   Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
 		Ray shadowRay = Ray(hitPt, shadowDir);
 		hit_t shadowHit = checkHit(shadowRay, hitResult.hitShape);
 
@@ -176,21 +176,21 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		}
 
       if (!inShadow) {
-         Eigen::Vector3f v = hitPt;
-         v = normalize(v);
+         //Vector3f v = hitPt;
+         //v = normalize(v);
 
-         Eigen::Vector3f r = -l + 2 * dot(n,l) * n;
+         Vector3f r = -l + n * 2 * dot(n,l);
          r = normalize(r);
 
          float specMult = max(dot(viewVec, r), 0.0f);
-         specMult = pow(specMult, hitResult.hitShape->mat.shine); //should be shine
+         specMult = pow(specMult, hitResult.hitShape->mat.shine);
          
-         Eigen::Vector3f colorS = specMult * rgb;
+         Vector3f colorS = rgb * specMult;
 
 			float hold = min(max(dot(l, n), 0.0f), 1.0f);
-			Eigen::Vector3f colorD = hold * rgb;
+			Vector3f colorD = rgb * hold;
 
-			Eigen::Vector3f toAdd = colorD * hitResult.hitShape->mat.diffuse
+			Vector3f toAdd = colorD * hitResult.hitShape->mat.diffuse
                                + colorS * hitResult.hitShape->mat.specular;
 			toAdd[0] *= lights[i].color.r;
 			toAdd[1] *= lights[i].color.g;
@@ -202,5 +202,5 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		}
 	}
 
-	return Pixel(color(0), color(1), color(2));
+	return Pixel(color[0], color[1], color[2]);
 }

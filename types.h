@@ -4,6 +4,7 @@
 #include <vector>
 #include "Triangle.hpp"
 #include "Sphere.hpp"
+#include "Vector3f.h"
 
 /* Color struct */
 typedef struct color_struct {
@@ -14,20 +15,20 @@ typedef struct color_struct {
 } color_t;
 
 typedef struct Camera {
-   Eigen::Vector3f position;
-   Eigen::Vector3f look_at;
-   Eigen::Vector3f right;
-   Eigen::Vector3f up;
+   Vector3f position;
+   Vector3f look_at;
+   Vector3f right;
+   Vector3f up;
 } Camera;
 
 typedef struct Light {
    color_t color;
-   Eigen::Vector3f location;
+   Vector3f location;
 } Light;
 
 typedef struct DirLight {
    color_t color;
-   Eigen::Vector3f direction;
+   Vector3f direction;
 } DirLight;
 
 #endif

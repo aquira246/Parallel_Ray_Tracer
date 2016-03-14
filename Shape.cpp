@@ -4,7 +4,7 @@ using namespace std;
 
 Shape::Shape() {
     //SetMaterialByNum(rand() % NUM_MATS);
-    //center = Eigen::Vector3f(0,0,0);
+    //center = Vector3f(0,0,0);
 }
 
 Shape::~Shape(){
@@ -16,12 +16,12 @@ void Shape::SetMaterialToMat(Material newMat) {
 }
 
 void Shape::SetMaterialByNum(int colorNum) {
-    Eigen::Vector3f col;
+    Vector3f col;
     float shine, a, s, d, r;
 
     switch (colorNum) {
         case 0:
-            col = Eigen::Vector3f(.8, .2, .2);
+            col = Vector3f(.8, .2, .2);
             a = .1;
             d = .7;
             s = .5;
@@ -30,7 +30,7 @@ void Shape::SetMaterialByNum(int colorNum) {
             break;
         
         case 1:
-            col = Eigen::Vector3f(.2, .2, .8);
+            col = Vector3f(.2, .2, .8);
             a = .1;
             d = .7;
             s = .5;
@@ -39,7 +39,7 @@ void Shape::SetMaterialByNum(int colorNum) {
             break;
 
         case 2:
-            col = Eigen::Vector3f(.2, .8, .2);
+            col = Vector3f(.2, .8, .2);
             a = .1;
             d = .7;
             s = .5;
@@ -48,7 +48,7 @@ void Shape::SetMaterialByNum(int colorNum) {
             break;
 
         case 3:
-            col = Eigen::Vector3f(.8, .2, .8);
+            col = Vector3f(.8, .2, .8);
             a = .1;
             d = .7;
             s = .5;
@@ -57,7 +57,7 @@ void Shape::SetMaterialByNum(int colorNum) {
             break;
 
         case 4:
-            col = Eigen::Vector3f(.8, .2, .8);
+            col = Vector3f(.8, .2, .8);
             a = .1;
             d = .7;
             s = .5;
@@ -66,7 +66,7 @@ void Shape::SetMaterialByNum(int colorNum) {
             break;
 
         case 5:
-            col = Eigen::Vector3f(.8, .8, .0);
+            col = Vector3f(.8, .8, .0);
             a = .1;
             d = .7;
             s = .5;
@@ -75,7 +75,7 @@ void Shape::SetMaterialByNum(int colorNum) {
             break;
 
         default:
-            col = Eigen::Vector3f(.6, .6, .6);
+            col = Vector3f(.6, .6, .6);
             a = .1;
             d = .5;
             s = .9;
@@ -126,11 +126,11 @@ void Shape::SetMaterial(string colorName) {
 // return vector: inxex 1: how many answers there are
 // index 2: the positive output
 // index 3: the negative output
-Eigen::Vector3f QuadraticFormula(double A, double B, double C) {
+Vector3f QuadraticFormula(double A, double B, double C) {
     double discriminate = B*B - 4*A*C;
 
     if (discriminate < 0) {
-        return Eigen::Vector3f(0,0,0);
+        return Vector3f(0,0,0);
     }
 
     double sqrtDisc = sqrt(discriminate);
@@ -138,10 +138,10 @@ Eigen::Vector3f QuadraticFormula(double A, double B, double C) {
     float plusOp = (-B + sqrtDisc)/(2*A);
 
     if (discriminate == 0) {
-        return Eigen::Vector3f(1, plusOp, 0);
+        return Vector3f(1, plusOp, 0);
     }
 
     float minOp = (-B - sqrtDisc)/(2*A);
 
-    return Eigen::Vector3f(2, plusOp, minOp);
+    return Vector3f(2, plusOp, minOp);
 }

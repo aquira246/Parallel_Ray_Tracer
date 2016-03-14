@@ -27,7 +27,7 @@ class Vector3f
       __device__ __host__
       Vector3f Normalize();
 
-      __device__ __host__
+      __device__ __host__ inline
       Vector3f operator+ (const Vector3f& other)
       {
          return Vector3f(this->data[0] + other.data[0],
@@ -35,7 +35,7 @@ class Vector3f
                          this->data[2] + other.data[2]);
       }
 
-      __device__ __host__
+      __device__ __host__ inline
       Vector3f operator- (const Vector3f& other)
       {
          return Vector3f(this->data[0] - other.data[0],
@@ -43,14 +43,31 @@ class Vector3f
                          this->data[2] - other.data[2]);
       }
 
-      __device__ __host__
+      __device__ __host__ inline
+      Vector3f operator-()
+      {
+         return Vector3f(-this->data[0], -this->data[1], -this->data[2]);
+      }
+
+      __device__ __host__ inline
+      Vector3f operator* (const float val)
+      {
+         return Vector3f(this->data[0] * val,
+                         this->data[1] * val,
+                         this->data[2] * val);
+      }
+
+      __device__ __host__ inline
       float& operator[] (int index)
       {
-         return data[index]; // No OOB checking for efficiency, so be careful
+         return (data[index]); // No OOB checking for efficiency, so be careful
       }
 
    private:
       float data[3];
 };
+
+//template <typename T> __device__ __host__
+//operator*(T scalar, const Vector3f &obj);
 
 #endif

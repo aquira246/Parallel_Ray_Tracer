@@ -2,17 +2,18 @@
 #ifndef __Ray__
 #define __Ray__
 
-#include <Eigen/Dense>
+#include "Vector3f.h"
+#include "VectorMath.h"
 
 class Ray
 {
 	public:
 		Ray();
-		Ray(Eigen::Vector3f d);
-		Ray(Eigen::Vector3f e, Eigen::Vector3f d);
+		Ray(Vector3f d);
+		Ray(Vector3f e, Vector3f d);
 		~Ray();
 
-		Eigen::Vector3f eye, direction;
+		Vector3f eye, direction;
 
 	private:
 };

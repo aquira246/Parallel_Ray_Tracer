@@ -12,10 +12,9 @@
 #include "Ray.hpp"
 #include "Shape.hpp"
 #include "Parse.hpp"
-#include "VectorMath.hpp"
+#include "VectorMath.h"
+#include "Vector3f.h"
 
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
 #include <vector>
 #include <math.h>
 
@@ -23,12 +22,12 @@
 
 using namespace std;
 
-Eigen::Vector3f backgroundCol;
+Vector3f backgroundCol;
 Picture pic;
 Scene scene;
 
-Eigen::Vector3f Up = Eigen::Vector3f(0,1,0);
-Eigen::Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
+Vector3f Up = Vector3f(0,1,0);
+Vector3f CameraPos, CameraDirection, CameraRight, CameraUp;
 
 bool USE_DIRECTION = false;
 
@@ -37,8 +36,8 @@ int height = 600;
 float aspectRatio;
 
 void InitCamera() {
-	CameraPos = Eigen::Vector3f(0,0,10);
-	CameraDirection = normalize(Eigen::Vector3f(0,0,-1));
+	CameraPos = Vector3f(0,0,10);
+	CameraDirection = normalize(Vector3f(0,0,-1));
 	CameraRight = cross(CameraDirection, Up);
 	CameraUp = cross(CameraRight, CameraDirection);
 }
@@ -66,7 +65,7 @@ void loadScene()
 {
    pic = Picture(width, height);
    aspectRatio = (double) width / height;
-   backgroundCol = Eigen::Vector3f(0.5,0.5,0.5);
+   backgroundCol = Vector3f(0.5,0.5,0.5);
    InitCamera(scene.camera);
 }
 
@@ -81,11 +80,11 @@ Ray ComputeCameraRay(int i, int j) {
       normalized_j = ((j/(float)pic.height) - 0.5) / aspectRatio;
    }
 
-   Eigen::Vector3f imagePoint = normalized_i * CameraRight + 
-								normalized_j * CameraUp +
-								CameraPos + CameraDirection;
+   Vector3f imagePoint = CameraRight * normalized_i + 
+								 CameraUp * normalized_j +
+								 CameraPos + CameraDirection;
 
-   Eigen::Vector3f ray_direction = imagePoint - CameraPos;
+   Vector3f ray_direction = imagePoint - CameraPos;
 
    return Ray(CameraPos, ray_direction);
 }
@@ -150,7 +149,28 @@ int main(int argc, char **argv)
       perror("fopen");
       exit(EXIT_FAILURE);
    }
-
+/*
+   Vector3f v = Vector3f(3.5, 4, 8);
+   cout << "V: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
+   Vector3f w = v * 2.0f;
+   cout << "W: " << w[0] << ", " << w[1] << ", " << w[2] << endl;
+   cout << "V: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
+   Vector3f nv = normalize(v);
+   Vector3f nw = normalize(w);
+   cout << "NW: " << nw[0] << ", " << nw[1] << ", " << nw[2] << endl;
+   cout << "NV: " << nv[0] << ", " << nv[1] << ", " << nv[2] << endl;
+   cout << "W: " << w[0] << ", " << w[1] << ", " << w[2] << endl;
+   cout << "V: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
+   cout << "Mag(v): " << magnitude(v) << endl;
+   cout << "Mag(w): " << magnitude(w) << endl;
+   Vector3f wminv = w - v;
+   Vector3f vminw = v - w;
+   cout << "w-v: " << wminv[0] << ", " << wminv[1] << ", " << wminv[2] << endl;
+   cout << "v-w: " << vminw[0] << ", " << vminw[1] << ", " << vminw[2] << endl;
+   Vector3f add = v + w;
+   cout << "v+w: " << add[0] << ", " << add[1] << ", " << add[2] << endl;
+   exit(0);
+*/
 	//Scene starts here
 	loadScene();
 	SetupPicture();

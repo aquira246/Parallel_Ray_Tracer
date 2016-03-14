@@ -6,12 +6,12 @@ constexpr float kEpsilon = 1e-8;
 
 Plane::Plane() {
     //SetMaterialByNum(rand() % NUM_MATS);
-    center = Eigen::Vector3f(0,0,0);
-    normal = Eigen::Vector3f(0,0,-1);
+    center = Vector3f(0,0,0);
+    normal = Vector3f(0,0,-1);
     radius = 1.0f;
 }
 
-Plane::Plane(Eigen::Vector3f c, Eigen::Vector3f n, float r) {
+Plane::Plane(Vector3f c, Vector3f n, float r) {
     //SetMaterialByNum(rand() % NUM_MATS);
     center = c;
     normal = n;
@@ -22,11 +22,11 @@ Plane::~Plane(){
 
 }
 
-Eigen::Vector3f Plane::GetNormal(Eigen::Vector3f hitPt) {
+Vector3f Plane::GetNormal(Vector3f hitPt) {
    return normal;
 }
 
-float Plane::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
+float Plane::checkHit(Vector3f eye, Vector3f dir) {
     
     float t = -1;
 
@@ -34,7 +34,7 @@ float Plane::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
     float denom = dot(normal, dir);
 
     if (fabs(denom) > kEpsilon) {
-        Eigen::Vector3f p0l0 = center - eye;
+        Vector3f p0l0 = center - eye;
         t = dot(p0l0, normal) / denom;
     }
 
@@ -44,8 +44,8 @@ float Plane::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
         return t;
     }
 
-    Eigen::Vector3f p = eye + dir * t;
-    Eigen::Vector3f v = p - center;
+    Vector3f p = eye + dir * t;
+    Vector3f v = p - center;
     float d2 = dot(v, v);
 
     if (d2 <= radius*radius) return t;

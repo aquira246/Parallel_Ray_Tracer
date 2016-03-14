@@ -1,5 +1,5 @@
 #include <math.h>
-#include "VectorMath2.h"
+#include "VectorMath.h"
 #include "Vector3f.h"
 
 __device__ __host__

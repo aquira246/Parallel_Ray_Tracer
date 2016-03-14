@@ -2,7 +2,6 @@
 #ifndef __Scene__
 #define __Scene__
 
-#include <Eigen/Dense>
 #include <vector>
 #include "Shape.hpp"
 #include "Triangle.hpp"
@@ -10,6 +9,8 @@
 #include "Plane.hpp"
 #include "types.h"
 #include "Pixel.hpp"
+#include "Vector3f.h"
+#include "VectorMath.h"
 
 typedef struct hit_struct {
    Shape *hitShape;

@@ -56,3 +56,12 @@ Vector3f Vector3f::Normalize() {
    float mag = this->Magnitude();
    return Vector3f(this->data[0] / mag, this->data[1] / mag, this->data[2] / mag);
 }
+/*
+template <typename T, Vector3f &obj> __device__ __host__
+operator*(T scalar, const Vector3f &obj)
+{
+   return Vector3f(obj.data[0] * scalar,
+                   obj.data[1] * scalar,
+                   obj.data[2] * scalar);
+}
+*/

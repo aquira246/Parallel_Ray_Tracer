@@ -8,17 +8,15 @@
 #include <iostream>
 #include <math.h> 
 #include <vector> 
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
 #include "Tokens.hpp"
 #include "types.h"
 #include "Triangle.hpp"
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "Vector3f.h"
 
 #include "Parse.hpp"
 
-using namespace Eigen;
 using namespace std;
 
 /* Functions in this file implement parsing operations for 
@@ -243,7 +241,7 @@ void ParseModifiers(Material &mat) {
          ParseInterior(modifiers.interior);
          break;      
       default: UngetToken();
-         mat.rgb = Eigen::Vector3f(modifiers.pigment.r,
+         mat.rgb = Vector3f(modifiers.pigment.r,
                              modifiers.pigment.g,
                              modifiers.pigment.b);
          mat.ambient = modifiers.finish.ambient;
@@ -331,7 +329,7 @@ void ParseTriangle(vector<Triangle> &triangles) {
 }
 
 void ParsePlane(vector<Plane> &planes) { 
-   Eigen::Vector3f normal;
+   Vector3f normal;
    float dist;
    Material mat;
 
@@ -344,7 +342,7 @@ void ParsePlane(vector<Plane> &planes) {
 
    ParseRightCurly();
 
-   planes.push_back(Plane(Eigen::Vector3f(0,dist,0), normal, -1));
+   planes.push_back(Plane(Vector3f(0,dist,0), normal, -1));
    planes.back().SetMaterialToMat(mat);
 }
 
