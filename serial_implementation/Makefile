@@ -43,13 +43,13 @@ all: $(OBJECT)
 	touch $@
 
 ball:
-	./rt resources/bunny_small.pov
+	./rt ../resources/bunny_small.pov
 tri:
-	./rt resources/bunny_small_tris.pov
+	./rt ../resources/bunny_small_tris.pov
 good:
-	./rt resources/simp_cam.pov
+	./rt ../resources/simp_cam.pov
 good2:
-	./rt resources/simp_cam2.pov
+	./rt ../resources/simp_cam2.pov
 clean:
 	rm -f *~ *.o a.out rt
 clear: $(OBJECT)
@@ -60,4 +60,4 @@ fast: $(OBJECT)
 	rm -f *~ *.o a.out rt
 	clear
 	$(CC) $(CFLAGS) $(INC) *.cpp $(LIB) -o rt
-	./rt resources/bunny_small.pov
+	./rt ../resources/bunny_small.pov
