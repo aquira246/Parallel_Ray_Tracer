@@ -98,7 +98,7 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    u = dot(tvec, pvec) * invDet;
    if (u < 0 || u > 1) return 0;
 
-   Eigen::Vector3f qvec = normalize(cross(tvec, ab));
+   Eigen::Vector3f qvec = cross(tvec, ab);
    v = dot(dir, qvec) * invDet;
    if (v < 0 || u + v > 1) return 0;
 
