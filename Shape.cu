@@ -3,8 +3,6 @@
 using namespace std;
 
 Shape::Shape() {
-    //SetMaterialByNum(rand() % NUM_MATS);
-    //center = Vector3f(0,0,0);
 }
 
 Shape::~Shape(){
@@ -126,6 +124,7 @@ void Shape::SetMaterial(string colorName) {
 // return vector: inxex 1: how many answers there are
 // index 2: the positive output
 // index 3: the negative output
+__device__ __host__
 Vector3f QuadraticFormula(double A, double B, double C) {
     double discriminate = B*B - 4*A*C;
 

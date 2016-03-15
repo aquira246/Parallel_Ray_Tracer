@@ -26,10 +26,12 @@ Sphere::~Sphere(){
 
 }
 
+__device__ __host__
 Vector3f Sphere::GetNormal(Vector3f hitPt) {
    return normalize(hitPt - center);
 }
 
+__device__ __host__
 float Sphere::checkHit(Vector3f eye, Vector3f dir) {
 	Vector3f dist = eye - center;
 

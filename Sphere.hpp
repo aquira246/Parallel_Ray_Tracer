@@ -22,7 +22,9 @@ class Sphere: public Shape
 		
 		// Shape has a center and radius, the only components of a sphere
 
+      __device__ __host__
       virtual Vector3f GetNormal(Vector3f hitPt);
+      __device__ __host__
 		float checkHit(Vector3f eye, Vector3f dir);
 
 	private:

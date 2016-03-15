@@ -1,8 +1,6 @@
 #include "Plane.hpp"
 
-using namespace std;
-
-constexpr float kEpsilon = 1e-8; 
+#define kEpsilon 1e-8 
 
 Plane::Plane() {
     //SetMaterialByNum(rand() % NUM_MATS);
@@ -22,10 +20,12 @@ Plane::~Plane(){
 
 }
 
+__device__ __host__
 Vector3f Plane::GetNormal(Vector3f hitPt) {
    return normal;
 }
 
+__device__ __host__
 float Plane::checkHit(Vector3f eye, Vector3f dir) {
     
     float t = -1;

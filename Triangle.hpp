@@ -17,7 +17,9 @@ class Triangle: public Shape
       Triangle(Vector3f pta, Vector3f ptb, Vector3f ptc);
       ~Triangle();
 
+      __device__ __host__
       virtual Vector3f GetNormal(Vector3f hitPt);
+      __device__ __host__
       float checkHit(Vector3f eye, Vector3f dir);
 
    protected:

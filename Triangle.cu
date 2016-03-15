@@ -1,8 +1,6 @@
 #include "Triangle.hpp"
 
-using namespace std;
-
-constexpr float kEpsilon = 1e-8; 
+#define kEpsilon 1e-8 
 
 Triangle::Triangle() {
    //SetMaterialByNum(rand() % NUM_MATS);
@@ -39,11 +37,13 @@ void Triangle::Initialize() {
    center = center + a;
 }
 
+__device__ __host__
 Vector3f Triangle::GetNormal(Vector3f hitPt) {
    return normal;
 }
 
 // http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
+__device__ __host__
 float Triangle::checkHit(Vector3f eye, Vector3f dir) {
    float u, v, t;
 

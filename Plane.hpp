@@ -1,6 +1,6 @@
 #pragma  once
-#ifndef __Plane__
-#define __Plane__
+#ifndef __PLANE_H__
+#define __PLANE_H__
 
 #include <math.h>
 #include <stdio.h>
@@ -13,18 +13,20 @@
 
 class Plane: public Shape
 {
-    public:
-        Plane();
-        Plane(Vector3f c, Vector3f n, float r);
-        ~Plane();
+   public:
+      Plane();
+      Plane(Vector3f c, Vector3f n, float r);
+      ~Plane();
 
-        Vector3f normal;
+      Vector3f normal;
         
-        virtual Vector3f GetNormal(Vector3f hitPt);
-        // Shape has a center and radius, the only components of a Plane
-        float checkHit(Vector3f eye, Vector3f dir);
+      __device__ __host__
+      virtual Vector3f GetNormal(Vector3f hitPt);
+      // Shape has a center and radius, the only components of a Plane
+      __device__ __host__
+      float checkHit(Vector3f eye, Vector3f dir);
 
-    private:
+   private:
 };
 
 #endif

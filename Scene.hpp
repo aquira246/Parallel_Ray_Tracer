@@ -32,6 +32,9 @@ class Scene
 		std::vector<Triangle> triangles;
 		std::vector<Sphere> spheres;
 		std::vector<Plane> planes;
+		std::vector<Triangle> triangles_d;
+		std::vector<Sphere> spheres_d;
+		std::vector<Plane> planes_d;
 
 		Pixel ComputeLighting(Ray laser, hit_t hitResult, bool print);
 	private:

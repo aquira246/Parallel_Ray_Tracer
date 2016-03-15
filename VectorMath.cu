@@ -1,6 +1,4 @@
-#include <math.h>
 #include "VectorMath.h"
-#include "Vector3f.h"
 
 __device__ __host__
 float magnitude(Vector3f V) {
