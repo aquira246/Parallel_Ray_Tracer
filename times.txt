@@ -1,0 +1,9 @@
+times:
+
+unthreaded
+tri bunny: 3 minutes 17 sec
+sphere bunny: 39 seconds
+
+parallel
+tri bunny:
+sphere bunny:
