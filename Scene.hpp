@@ -15,7 +15,7 @@
 
 #define TILE_WIDTH 32
 
-typedef struct hit_struct {
+typedef struct hit_t {
    Shape *hitShape;
    double t;
    bool isHit;
@@ -74,6 +74,13 @@ __global__ void renderScene(float aspectRatio, int width, int height,
                             Plane *planes, int numPlanes,
                             Triangle *triangles, int numTriangles,
                             Sphere *spheres, int numSpheres);
+
+__device__
+float plane_CheckHit(Plane *plane, Vector3f eye, Vector3f dir);
+__device__
+float sphere_CheckHit(Sphere *sphere, Vector3f eye, Vector3f dir);
+__device__ 
+float triangle_CheckHit(Triangle *tri, Vector3f eye, Vector3f dir);
 
 
 #endif

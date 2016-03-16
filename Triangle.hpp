@@ -22,11 +22,10 @@ class Triangle: public Shape
       __device__ __host__
       float checkHit(Vector3f eye, Vector3f dir);
 
-   protected:
-   // Parts of a triangle
-   Vector3f a, b, c;
-   Vector3f normal;
-   float areaSqr;
+      // Parts of a triangle
+      Vector3f a, b, c;
+      Vector3f normal;
+      float areaSqr;
 
    void Initialize();
 };
