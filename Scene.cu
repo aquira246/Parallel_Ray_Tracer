@@ -146,10 +146,7 @@ float sphere_CheckHit(Sphere *sphere, Vector3f eye, Vector3f dir) {
 __device__ 
 float triangle_CheckHit(Triangle *tri, Vector3f eye, Vector3f dir) {
    float u, v, t;
-   Vector3f a, b, c;
-   a = tri->a;
-   b = tri->b;
-   c = tri->c;
+
    // first check for circumsphere hit
    Vector3f dist = eye - tri->center;
 
@@ -180,8 +177,8 @@ float triangle_CheckHit(Triangle *tri, Vector3f eye, Vector3f dir) {
       return 0;
    }
 
-   Vector3f ab = (b - a);
-   Vector3f ac = (c - a);
+   Vector3f ab = (tri->b - tri->a);
+   Vector3f ac = (tri->c - tri->a);
    Vector3f pvec = cross(dir, ac);
    float det = dot(ab, pvec);
    #ifdef CULLING
@@ -194,17 +191,19 @@ float triangle_CheckHit(Triangle *tri, Vector3f eye, Vector3f dir) {
    #endif
    float invDet = 1 / det;
 
-   Vector3f tvec = eye - a;
-   u = dot(tvec, pvec) * invDet;
-   if (u < 0 || u > 1) return 0;
+   //Vector3f tvec = eye - tri->a;
+   //u = invDet * dot(tvec, pvec);
+   // if (u < 0 || u > 1) return 0;
 
-   Vector3f qvec = cross(tvec, ab);
-   v = dot(dir, qvec) * invDet;
-   if (v < 0 || u + v > 1) return 0;
+   // Vector3f qvec = cross(tvec, ab);
+   // v = dot(dir, qvec) * invDet;
+   // if (v < 0 || u + v > 1) return 0;
 
-   t = dot(ac, qvec) * invDet;
+   // t = dot(ac, qvec) * invDet;
 
-   return t;
+   // return t;
+
+   return 1;
 }
 
 __device__ hit_t checkHit(Ray testRay, Shape *exclude,
@@ -231,7 +230,7 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
          }
 		}
 	}
-/*
+
 	for (unsigned int i = 0; i < numTriangles; ++i)
 	{
       if(&(triangles[i]) != exclude) {
@@ -246,7 +245,7 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
          }
 		}
 	}
-*/
+
 	for (unsigned int i = 0; i < numSpheres; ++i)
 	{
       if(&(spheres[i]) != exclude) {
