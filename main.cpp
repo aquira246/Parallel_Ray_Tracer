@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
-#include <memory>
+//#include <memory>
 
 #include "Picture.hpp"
 #include "Scene.hpp"
@@ -33,7 +33,6 @@ bool USE_DIRECTION = false;
 
 int width = 600;
 int height = 600;
-float aspectRatio;
 
 void InitCamera() {
 	CameraPos = Vector3f(0,0,10);
@@ -64,29 +63,8 @@ void InitCamera(Camera &camera) {
 void loadScene()
 {
    pic = Picture(width, height);
-   aspectRatio = (double) width / height;
-   backgroundCol = Vector3f(0.5,0.5,0.5);
+   backgroundCol = Vector3f(0, 0, 0);
    InitCamera(scene.camera);
-}
-
-Ray ComputeCameraRay(int i, int j) {
-   float normalized_i, normalized_j;
-   if(aspectRatio > 1) {
-      normalized_i = ((i/(float)pic.width) - 0.5) * aspectRatio;
-      normalized_j = (j/(float)pic.height) - 0.5;
-   }
-   else {
-      normalized_i = (i/(float)pic.width) - 0.5;
-      normalized_j = ((j/(float)pic.height) - 0.5) / aspectRatio;
-   }
-
-   Vector3f imagePoint = CameraRight * normalized_i + 
-								 CameraUp * normalized_j +
-								 CameraPos + CameraDirection;
-
-   Vector3f ray_direction = imagePoint - CameraPos;
-
-   return Ray(CameraPos, ray_direction);
 }
 
 void SetupPicture() {
@@ -100,31 +78,16 @@ void SetupPicture() {
    cout << "Lights: " << scene.lights.size() << endl;
    #endif
 
-	for (int x = 0; x < width; ++x)
-	{
-		for (int y = 0; y < height; ++y)
-		{
-			laser = ComputeCameraRay(x, y);
-			hit_t hitShape = scene.checkHit(laser);
-			
-			if (hitShape.isHit) {
-				pic.setPixel(x, y, scene.ComputeLighting(laser, hitShape, false));
-			} else {
-				pic.setPixel(x, y, Pixel(backgroundCol[0], backgroundCol[1], backgroundCol[2]));
-				#ifdef DEBUG
-				++noHitCount;
-				#endif
-			}
-			
-			#ifdef DEBUG
-			cout << "Pixel: " << x * height + y << "\r";
-			#endif
-		}
-	}
+   scene.setupCudaMem(pic.pixels.size());
 
-   #ifdef DEBUG
-   cout << "Rays with no hit: " << noHitCount << endl;
-   #endif
+   renderStart(width, height, backgroundCol, CameraRight, CameraUp,
+               CameraPos, CameraDirection, scene.pixels_d,
+               scene.lights_d, scene.lights.size(),
+               scene.planes_d, scene.planes.size(),
+               scene.triangles_d, scene.triangles.size(),
+               scene.spheres_d, scene.spheres.size());
+
+   scene.getCudaMem(&(pic.pixels[0]), pic.pixels.size());
 }
 
 void PrintPicture() {

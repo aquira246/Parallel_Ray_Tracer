@@ -9,38 +9,38 @@ Picture::Picture()
 {
 	width = 0;
 	height = 0;
-	Pixels.clear();
+	pixels.clear();
 }
 
 Picture::Picture(int w, int h)
 {
 	width = 0;
 	height = 0;
-	Pixels.clear();
+	pixels.clear();
 
 	resize(w, h);
 }
 
 Picture::~Picture()
 {
-	Pixels.clear();
+	pixels.clear();
 }
 
 void Picture::setPixel(int x, int y, Pixel newP)
 {
 	int idx = getIdx(x, y);
 	if (idx != -1)
-		Pixels[idx] = newP;
+		pixels[idx] = newP;
 }
 
 Pixel Picture::getPixel(int x, int y)
 {
 	int idx = getIdx(x, y);
 	if (idx != -1)
-		return Pixels[idx];
+		return pixels[idx];
 	else {
 		cout << "ERROR! Index out of bounds" << endl;
-		return Pixels[0];
+		return pixels[0];
 	}
 }
 
@@ -50,12 +50,13 @@ void Picture::resize(int w, int h)
    int newSize = w * h;
 	width = w;
 	height = h;
-	Pixels.resize(newSize);
-
+	pixels.resize(newSize);
+/*
    for(int i = oldSize; i < newSize; ++i)
    {
       Pixels[i] = Pixel();
    } 
+*/
 }
 
 int Picture::getIdx(int x, int y) {

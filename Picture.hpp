@@ -17,7 +17,7 @@ class Picture
 		~Picture();
 		
 		int width, height;
-		std::vector<Pixel> Pixels;
+		std::vector<Pixel> pixels;
 
 		void setPixel(int x, int y, Pixel newP);
 		Pixel getPixel(int x, int y);
