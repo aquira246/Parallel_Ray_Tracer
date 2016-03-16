@@ -158,8 +158,8 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 	bool inShadow;
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
-	Eigen::Vector3f color = ambient;
    Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
+	Eigen::Vector3f color = Eigen::Vector3f(0,0,0);
 
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
@@ -192,14 +192,21 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 
 			Eigen::Vector3f toAdd = colorD * hitResult.hitShape->mat.diffuse
                                + colorS * hitResult.hitShape->mat.specular;
+         //spec + diffuse setup
 			toAdd[0] *= lights[i].color.r;
 			toAdd[1] *= lights[i].color.g;
 			toAdd[2] *= lights[i].color.b;
+         //actually add spec + diffuse
 			color = color + toAdd;
-         color[0] = min(max(color[0],0.0f),1.0f);
-         color[1] = min(max(color[1],0.0f),1.0f);
-         color[2] = min(max(color[2],0.0f),1.0f);
 		}
+      //ambient addition
+	   color[0] += ambient[0] * lights[i].color.r;
+	   color[1] += ambient[1] * lights[i].color.g;
+	   color[2] += ambient[2] * lights[i].color.b;
+      //make sure in range still
+      color[0] = min(max(color[0],0.0f),1.0f);
+      color[1] = min(max(color[1],0.0f),1.0f);
+      color[2] = min(max(color[2],0.0f),1.0f);
 	}
 
 	return Pixel(color(0), color(1), color(2));
