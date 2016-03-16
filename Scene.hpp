@@ -19,6 +19,9 @@ typedef struct hit_t {
    Shape *hitShape;
    double t;
    bool isHit;
+   float nx; 
+   float ny;
+   float nz;
 } hit_t;
 
 class Scene

@@ -215,6 +215,7 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
 	Shape* hitShape = NULL;
 	bool hit = false;
 	float bestT = 10000;
+   float nx = 0, ny = 0, nz = 0;
 
 	for (unsigned int i = 0; i < numPlanes; ++i)
 	{
@@ -224,6 +225,9 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
 			   hitShape = &(planes[i]);
 			   bestT = t;
    			hit = true;
+            nx = planes[i].normal[0];
+            ny = planes[i].normal[1];
+            nz = planes[i].normal[2];
          }
 		}
 	}
@@ -236,6 +240,9 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
 		   	hitShape = &(triangles[i]);
 			   bestT = t;
    			hit = true;
+            nx = triangles[i].normal[0];
+            ny = triangles[i].normal[1];
+            nz = triangles[i].normal[2];
          }
 		}
 	}
@@ -243,20 +250,30 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
 	for (unsigned int i = 0; i < numSpheres; ++i)
 	{
       if(&(spheres[i]) != exclude) {
+
    		float t = sphere_CheckHit(&spheres[i], testRay.eye, testRay.direction);
 	   	if (t > 0 && t < bestT) {
 		   	hitShape = &(spheres[i]);
 			   bestT = t;
    			hit = true;
+            Vector3f hitPt = testRay.eye - testRay.direction * t;
+            Vector3f norm = normalize(hitPt - spheres[i].center);
+            nx = norm[0];
+            ny = norm[1];
+            nz = norm[2];
          }
 		}
 	}
+
+   hit_t ret;
 
 	if (!hit) {
 		hitShape = NULL;
 	}
 
-	hit_t ret;
+   ret.nx = nx;
+   ret.ny = ny;
+   ret.nz = nz;
 	ret.hitShape = hitShape;
 	ret.isHit = hit;
 	ret.t = bestT;
@@ -272,61 +289,67 @@ __device__ Pixel ComputeLighting(Ray laser, hit_t hitResult,
 {
 	Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
 	Vector3f viewVec = -laser.direction;
-	Vector3f rgb = hitResult.hitShape->mat.rgb;
-	Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
-   Vector3f n = hitResult.hitShape->GetNormal(hitPt);
+	// Vector3f rgb = hitResult.hitShape->mat.rgb;
+	// Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
+   Vector3f n;
+   // n[0] = hitResult.nx;
+   // n[1] = hitResult.ny;
+   // n[2] = hitResult.nz;
+
 	Vector3f color;
 	bool inShadow;
 
-	// calculate if the point is in a shadow. If so, we later return the pixel as all black
+	// // calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < numLights; ++i)
 	{
 		inShadow = false;
-		Vector3f shadowDir = normalize(lights[i].location - hitPt);
-	   Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
+		// Vector3f shadowDir = normalize(lights[i].location - hitPt);
+	 //   Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
 		Ray shadowRay = Ray(hitPt, shadowDir);
-		hit_t shadowHit = checkHit(shadowRay, hitResult.hitShape,
-                                 planes, numPlanes,
-                                 triangles, numTriangles,
-                                 spheres, numSpheres);
+	// 	hit_t shadowHit = checkHit(shadowRay, hitResult.hitShape,
+ //                                 planes, numPlanes,
+ //                                 triangles, numTriangles,
+ //                                 spheres, numSpheres);
 
-		if (shadowHit.isHit) {
-			if (shadowHit.hitShape != hitResult.hitShape)
-				inShadow = true;
-		}
+	// 	if (shadowHit.isHit) {
+	// 		if (shadowHit.hitShape != hitResult.hitShape)
+	// 			inShadow = true;
+	// 	}
 
-      if (!inShadow) {
-         Vector3f r = -l + n * 2 * dot(n,l);
-         r = normalize(r);
+ //      if (!inShadow) {
+ //         Vector3f r = -l + n * 2 * dot(n,l);
+ //         r = normalize(r);
 
-         float specMult = max(dot(viewVec, r), 0.0f);
-         specMult = pow(specMult, hitResult.hitShape->mat.shine);
+ //         float specMult = max(dot(viewVec, r), 0.0f);
+ //         specMult = pow(specMult, hitResult.hitShape->mat.shine);
          
-         Vector3f colorS = rgb * specMult;
+ //         Vector3f colorS = rgb * specMult;
 
-			float hold = min(max(dot(l, n), 0.0f), 1.0f);
-			Vector3f colorD = rgb * hold;
+	// 		float hold = min(max(dot(l, n), 0.0f), 1.0f);
+	// 		Vector3f colorD = rgb * hold;
 
-			Vector3f toAdd = colorD * hitResult.hitShape->mat.diffuse
-                               + colorS * hitResult.hitShape->mat.specular;
-         //spec + diffuse setup
-			toAdd[0] *= lights[i].color.r;
-			toAdd[1] *= lights[i].color.g;
-			toAdd[2] *= lights[i].color.b;
-         //actually add spec + diffuse
-			color = color + toAdd;
-		}
-      //ambient addition
-	   color[0] += ambient[0] * lights[i].color.r;
-	   color[1] += ambient[1] * lights[i].color.g;
-	   color[2] += ambient[2] * lights[i].color.b;
-      //make sure in range still
-      color[0] = min(max(color[0],0.0f),1.0f);
-      color[1] = min(max(color[1],0.0f),1.0f);
-      color[2] = min(max(color[2],0.0f),1.0f);
+	// 		Vector3f toAdd = colorD * hitResult.hitShape->mat.diffuse
+ //                               + colorS * hitResult.hitShape->mat.specular;
+ //         //spec + diffuse setup
+	// 		toAdd[0] *= lights[i].color.r;
+	// 		toAdd[1] *= lights[i].color.g;
+	// 		toAdd[2] *= lights[i].color.b;
+ //         //actually add spec + diffuse
+	// 		color = color + toAdd;
+	// 	}
+ //      //ambient addition
+	//    color[0] += ambient[0] * lights[i].color.r;
+	//    color[1] += ambient[1] * lights[i].color.g;
+	//    color[2] += ambient[2] * lights[i].color.b;
+ //      //make sure in range still
+ //      color[0] = min(max(color[0],0.0f),1.0f);
+ //      color[1] = min(max(color[1],0.0f),1.0f);
+ //      color[2] = min(max(color[2],0.0f),1.0f);
 	}
 
-	return Pixel(color[0], color[1], color[2]);
+	// return Pixel(color[0], color[1], color[2]);
+
+   return Pixel(0,0,1);
 }
 
 __global__ void renderScene(float aspectRatio, int width, int height,
@@ -368,27 +391,20 @@ __global__ void renderScene(float aspectRatio, int width, int height,
                                 triangles, numTriangles,
                                 spheres, numSpheres);
       
-      // printf("actually hit shape\n");
+      if (pixelNum == 0)
+         printf("\n\n=================actually hit shape=================\n\n");
+
       if (hitShape.isHit) {
-         pixels[pixelNum] = Pixel(1, 0, 0);
-         // pixels[pixelNum] = ComputeLighting(laser, hitShape,
-         //                                             lights, numLights,
-         //                                             planes, numPlanes,
-         //                                             triangles, numTriangles,
-         //                                             spheres, numSpheres);
+         pixels[pixelNum] = ComputeLighting(laser, hitShape,
+                                                     lights, numLights,
+                                                     planes, numPlanes,
+                                                     triangles, numTriangles,
+                                                     spheres, numSpheres);
       } else {
          // not hit means we color it with a background color
          pixels[pixelNum] = Pixel(backgroundCol[0],
                                                backgroundCol[1],
                                                backgroundCol[2]);
       }
-
- //        pixels[pixelNum] = Pixel(0.5, pixelNum % 50 ? 1 : 0, 0);
-      // if (row == col)
-      // {
-      //    pixels[pixelNum] = Pixel(1, 0, 0);
-      // } else {
-      //    pixels[pixelNum] = Pixel(0, 1, 0);
-      // }
    }
 }
