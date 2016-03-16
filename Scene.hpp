@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <cuda_runtime.h>
+#include <stdint.h>
 #include "Shape.hpp"
 #include "Triangle.hpp"
 #include "Sphere.hpp"

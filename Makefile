@@ -2,7 +2,7 @@ CU=nvcc
 CC=icpc
 CFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost -lcudadevrt -lcudart
 LDFLAGS=-ansi -pedantic -Wno-deprecated -std=c++0x -Wall -pedantic -O3 -fopenmp -xHost -lcudadevrt -lcudart -o
-INC=-I$(EIGEN3_INCLUDE_DIR) -I./ -I/usr/local/cuda/include
+INC=-I./ -I/usr/local/cuda/include
 LIB=
 CUFLAGS=-rdc=true
 

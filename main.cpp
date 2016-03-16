@@ -79,10 +79,10 @@ void SetupPicture() {
 
    renderStart(width, height, backgroundCol, CameraRight, CameraUp,
                CameraPos, CameraDirection, scene.pixels_d,
-               scene.lights_d, scene.lights.size(),
-               scene.planes_d, scene.planes.size(),
-               scene.triangles_d, scene.triangles.size(),
-               scene.spheres_d, scene.spheres.size());
+               scene.lights_d, (uint32_t) scene.lights.size(),
+               scene.planes_d, (uint32_t) scene.planes.size(),
+               scene.triangles_d, (uint32_t) scene.triangles.size(),
+               scene.spheres_d, (uint32_t) scene.spheres.size());
 
    scene.getCudaMem(&(pic.pixels[0]), pic.pixels.size()*sizeof(Pixel));
 }
@@ -109,28 +109,7 @@ int main(int argc, char **argv)
       perror("fopen");
       exit(EXIT_FAILURE);
    }
-/*
-   Vector3f v = Vector3f(3.5, 4, 8);
-   cout << "V: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
-   Vector3f w = v * 2.0f;
-   cout << "W: " << w[0] << ", " << w[1] << ", " << w[2] << endl;
-   cout << "V: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
-   Vector3f nv = normalize(v);
-   Vector3f nw = normalize(w);
-   cout << "NW: " << nw[0] << ", " << nw[1] << ", " << nw[2] << endl;
-   cout << "NV: " << nv[0] << ", " << nv[1] << ", " << nv[2] << endl;
-   cout << "W: " << w[0] << ", " << w[1] << ", " << w[2] << endl;
-   cout << "V: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
-   cout << "Mag(v): " << magnitude(v) << endl;
-   cout << "Mag(w): " << magnitude(w) << endl;
-   Vector3f wminv = w - v;
-   Vector3f vminw = v - w;
-   cout << "w-v: " << wminv[0] << ", " << wminv[1] << ", " << wminv[2] << endl;
-   cout << "v-w: " << vminw[0] << ", " << vminw[1] << ", " << vminw[2] << endl;
-   Vector3f add = v + w;
-   cout << "v+w: " << add[0] << ", " << add[1] << ", " << add[2] << endl;
-   exit(0);
-*/
+
 	//Scene starts here
 	loadScene();
 	SetupPicture();

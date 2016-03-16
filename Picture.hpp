@@ -2,7 +2,6 @@
 #ifndef __Picture__
 #define __Picture__
 
-#include <Eigen/Dense>
 #include <Pixel.hpp>
 #include <vector>
 #include <iostream>

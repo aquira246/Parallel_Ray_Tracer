@@ -8,12 +8,14 @@ using namespace std;
 
 Scene::Scene() {
 	lights.clear();
+	planes.clear();
 	triangles.clear();
 	spheres.clear();
 }
 
 Scene::~Scene() {
 	lights.clear();
+	planes.clear();
 	triangles.clear();
 	spheres.clear();
 }
@@ -46,7 +48,6 @@ void Scene::setupCudaMem(int bufferSize) {
 void Scene::getCudaMem(Pixel *pixels_h, int bufferSize) {
    checkCudaErrors(cudaMemcpy(pixels_h, pixels_d, bufferSize,
                    cudaMemcpyDeviceToHost), "cudaMemcpy");
-   //TODO memcopy back for pixels is correct???
    //TODO free gpu mem
    cout << "CudaMem Complete" << endl;
 }
@@ -216,7 +217,7 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
 	float bestT = 10000;
    float nx = 0, ny = 0, nz = 0;
 
-	for (unsigned int i = 0; i < numPlanes; ++i)
+	for (uint32_t i = 0; i < numPlanes; ++i)
 	{
       if(&(planes[i]) != exclude) {
 		   float t = plane_CheckHit(&planes[i], testRay.eye, testRay.direction);
@@ -230,8 +231,8 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
          }
 		}
 	}
-
-	for (unsigned int i = 0; i < numTriangles; ++i)
+/*
+	for (uint32_t i = 0; i < numTriangles; ++i)
 	{
       if(&(triangles[i]) != exclude) {
    		float t = triangle_CheckHit(&triangles[i], testRay.eye, testRay.direction);
@@ -245,18 +246,18 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
          }
 		}
 	}
-
-	for (unsigned int i = 0; i < numSpheres; ++i)
+*/
+	for (uint32_t i = 0; i < 2/*numSpheres*/; ++i)
 	{
       if(&(spheres[i]) != exclude) {
 
-   		float t = sphere_CheckHit(&spheres[i], testRay.eye, testRay.direction);
+   		float t = sphere_CheckHit(&(spheres[i]), testRay.eye, testRay.direction);
 	   	if (t > 0 && t < bestT) {
 		   	hitShape = &(spheres[i]);
 			   bestT = t;
    			hit = true;
             Vector3f hitPt = testRay.eye - testRay.direction * t;
-            Vector3f norm = normalize(hitPt - spheres[i].center);
+            Vector3f norm = hitPt - hitShape->center;
             nx = norm[0];
             ny = norm[1];
             nz = norm[2];
@@ -287,16 +288,17 @@ __device__ Pixel ComputeLighting(Ray laser, hit_t hitResult,
                                  Sphere *spheres, int numSpheres)
 {
 	Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
-	Vector3f viewVec = -laser.direction;
+	//Vector3f viewVec = -laser.direction;
 	// Vector3f rgb = hitResult.hitShape->mat.rgb;
 	// Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
-   Vector3f n;
-   // n[0] = hitResult.nx;
+   Vector3f nv = Vector3f(0.0f,0.0f,0.0f);
+   //hitResult.nx = 0;
+   nv[0] = hitResult.nx; //SEG FAULT BUT WHY???
    // n[1] = hitResult.ny;
    // n[2] = hitResult.nz;
 
 	Vector3f color;
-	bool inShadow;
+	bool inShadow = nv[0] > 0;
 
 	// // calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < numLights; ++i)
