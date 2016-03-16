@@ -27,7 +27,7 @@ ifdef DEBUG
 endif
 
 all: $(OBJECT)
-	nvcc -g -ccbin=icpc -Xcompiler "$(LDFLAGS) $(INC) $(LIB)" $(OBJECT) -o rt
+	nvcc -g -arch=sm_30 -ccbin=icpc -Xcompiler "$(LDFLAGS) $(INC) $(LIB)" $(OBJECT) -o rt
 
 %.o: %.cpp
 	$(CC) -g -c $< $(CFLAGS) $(INC) $(LIB)
@@ -39,7 +39,7 @@ all: $(OBJECT)
 	touch $@
 	
 %.o: %.cu
-	$(CU) -g -c -m64 $< $(LIBS) $(INC) $(CUFLAGS) $(OPTS)
+	$(CU) -g -c -m64 -arch=sm_30 $< $(LIBS) $(INC) $(CUFLAGS) $(OPTS)
 
 %.cu: %.h
 	touch $@
