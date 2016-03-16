@@ -17,22 +17,28 @@ Scene::~Scene() {
 }
 
 void Scene::setupCudaMem(int bufferSize) {
+  cout << "Starting to setup cuda" << endl;
+
    /* allocate device memory */
-   checkCudaErrors(cudaMalloc((void**) pixels_d, bufferSize), "cudaMalloc");
-   checkCudaErrors(cudaMalloc((void**) lights_d, lights.size()), "cudaMalloc");
-   checkCudaErrors(cudaMalloc((void**) triangles_d, triangles.size()), "cudaMalloc");
-   checkCudaErrors(cudaMalloc((void**) spheres_d, spheres.size()), "cudaMalloc");
-   checkCudaErrors(cudaMalloc((void**) planes_d, planes.size()), "cudaMalloc");
+   checkCudaErrors(cudaMalloc((void**) &pixels_d, bufferSize), "cudaMalloc");
+   checkCudaErrors(cudaMalloc((void**) &lights_d, sizeof(Light)*lights.size()), "cudaMalloc");
+   checkCudaErrors(cudaMalloc((void**) &triangles_d, sizeof(Triangle)*triangles.size()), "cudaMalloc");
+   checkCudaErrors(cudaMalloc((void**) &spheres_d, sizeof(Sphere)*spheres.size()), "cudaMalloc");
+   checkCudaErrors(cudaMalloc((void**) &planes_d, sizeof(Plane)*planes.size()), "cudaMalloc");
+
+   cout << "CudaMalloc Success" << endl;
 
    /* copy into device memory */
-   checkCudaErrors(cudaMemcpy((void **) &lights_d, &(lights[0]), lights.size(),
+   checkCudaErrors(cudaMemcpy(lights_d, &(lights[0]), sizeof(Light)*lights.size(),
                    cudaMemcpyHostToDevice), "cudaMemcpy");
-   checkCudaErrors(cudaMemcpy((void **) triangles_d, &(triangles[0]), triangles.size(),
+   checkCudaErrors(cudaMemcpy(triangles_d, &(triangles[0]), sizeof(Triangle)*triangles.size(),
                    cudaMemcpyHostToDevice), "cudaMemcpy");
-   checkCudaErrors(cudaMemcpy((void **) spheres_d, &(spheres[0]), spheres.size(),
+   checkCudaErrors(cudaMemcpy(spheres_d, &(spheres[0]), sizeof(Sphere)*spheres.size(),
                    cudaMemcpyHostToDevice), "cudaMemcpy");
-   checkCudaErrors(cudaMemcpy((void **) planes_d, &(planes[0]), planes.size(),
+   checkCudaErrors(cudaMemcpy(planes_d, &(planes[0]), sizeof(Plane)*planes.size(),
                    cudaMemcpyHostToDevice), "cudaMemcpy");
+
+   cout << "Finished setting up cuda" << endl;
 }
 
 void Scene::getCudaMem(Pixel *pixels_h, int bufferSize) {
@@ -40,7 +46,7 @@ void Scene::getCudaMem(Pixel *pixels_h, int bufferSize) {
                    cudaMemcpyDeviceToHost), "cudaMemcpy");
    //TODO memcopy back for pixels is correct???
    //TODO free gpu mem
-   
+   cout << "CudaMem Complete" << endl;
 }
 
 void renderStart(int width, int height,
@@ -52,6 +58,7 @@ void renderStart(int width, int height,
                  Triangle *triangles, int numTriangles,
                  Sphere *spheres, int numSpheres)
 {
+  cout << "Starting render" << endl;
    float aspectRatio = (float) width / height;
    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
    dim3 dimGrid(ceil((double) width / TILE_WIDTH),
@@ -65,6 +72,8 @@ void renderStart(int width, int height,
                                       planes, numPlanes,
                                       triangles, numTriangles,
                                       spheres, numSpheres);
+
+   cout << "Finished render start" << endl;
 }
 
 /*
@@ -210,6 +219,7 @@ __global__ void renderScene(float aspectRatio,
 {
    int row = blockIdx.y * blockDim.y + threadIdx.y;
    int col = blockIdx.x * blockDim.x + threadIdx.x;
+   printf("starting to render scene at (%d, %d)\n", row, col);
 
    float normalized_i, normalized_j;
    if(aspectRatio > 1) {
@@ -235,6 +245,7 @@ __global__ void renderScene(float aspectRatio,
                              triangles, numTriangles,
                              spheres, numSpheres);
    
+   printf("actually hit shape\n");
    if (hitShape.isHit) {
       pixels[col + row * gridDim.x] = ComputeLighting(laser, hitShape,
                                                   lights, numLights,
