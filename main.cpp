@@ -71,7 +71,6 @@ void SetupPicture() {
    Ray laser;
 
    #ifdef DEBUG
-   int noHitCount = 0;
    cout << "Triangles: " << scene.triangles.size() << endl;
    cout << "Spheres: " << scene.spheres.size() << endl;
    cout << "Planes: " << scene.planes.size() << endl;
@@ -87,7 +86,7 @@ void SetupPicture() {
                scene.triangles_d, scene.triangles.size(),
                scene.spheres_d, scene.spheres.size());
 
-   scene.getCudaMem(&(pic.pixels[0]), pic.pixels.size());
+   scene.getCudaMem(&(pic.pixels[0]), pic.pixels.size()*sizeof(Pixel));
 }
 
 void PrintPicture() {
