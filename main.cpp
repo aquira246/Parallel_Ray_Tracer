@@ -68,8 +68,6 @@ void loadScene()
 }
 
 void SetupPicture() {
-   Ray laser;
-
    #ifdef DEBUG
    cout << "Triangles: " << scene.triangles.size() << endl;
    cout << "Spheres: " << scene.spheres.size() << endl;

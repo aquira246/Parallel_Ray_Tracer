@@ -109,7 +109,7 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
          }
 		}
 	}
-
+/*
 	for (unsigned int i = 0; i < numTriangles; ++i)
 	{
       if(&(triangles[i]) != exclude) {
@@ -133,7 +133,7 @@ __device__ hit_t checkHit(Ray testRay, Shape *exclude,
          }
 		}
 	}
-
+*/
 	if (!hit) {
 		hitShape = NULL;
 	}
@@ -228,12 +228,12 @@ __global__ void renderScene(float aspectRatio, int width, int height,
 
       float normalized_i, normalized_j;
       if(aspectRatio > 1) {
-         normalized_i = ((col/(float)gridDim.x) - 0.5) * aspectRatio;
-         normalized_j = (row/(float)gridDim.y) - 0.5;
+         normalized_i = ((col/(float) width) - 0.5) * aspectRatio;
+         normalized_j = (row/(float) height) - 0.5;
       }
       else {
-         normalized_i = (col/(float)gridDim.x) - 0.5;
-         normalized_j = ((row/(float)gridDim.y) - 0.5) / aspectRatio;
+         normalized_i = (col/(float) width) - 0.5;
+         normalized_j = ((row/(float) height) - 0.5) / aspectRatio;
       }
 
       Vector3f imagePoint = CameraRight * normalized_i + 
@@ -265,6 +265,7 @@ __global__ void renderScene(float aspectRatio, int width, int height,
                                                backgroundCol[2]);
       }
 
+ //        pixels[pixelNum] = Pixel(0.5, pixelNum % 50 ? 1 : 0, 0);
       // if (row == col)
       // {
       //    pixels[pixelNum] = Pixel(1, 0, 0);
