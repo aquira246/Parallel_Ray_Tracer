@@ -305,7 +305,7 @@ __device__ Pixel ComputeLighting(Ray laser, hit_t hitResult,
 		inShadow = false;
 		// Vector3f shadowDir = normalize(lights[i].location - hitPt);
 	 //   Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
-		Ray shadowRay = Ray(hitPt, shadowDir);
+		// Ray shadowRay = Ray(hitPt, shadowDir);
 	// 	hit_t shadowHit = checkHit(shadowRay, hitResult.hitShape,
  //                                 planes, numPlanes,
  //                                 triangles, numTriangles,
