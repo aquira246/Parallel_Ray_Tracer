@@ -78,7 +78,7 @@ void SetupPicture() {
    cout << "Lights: " << scene.lights.size() << endl;
    #endif
 
-   scene.setupCudaMem(pic.pixels.size());
+   scene.setupCudaMem(pic.pixels.size()*sizeof(Pixel));
 
    renderStart(width, height, backgroundCol, CameraRight, CameraUp,
                CameraPos, CameraDirection, scene.pixels_d,
