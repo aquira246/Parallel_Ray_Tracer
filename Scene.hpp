@@ -66,7 +66,7 @@ __device__ Pixel ComputeLighting(Ray laser, hit_t hitResult,
                                  Triangle *triangles, int numTriangles,
                                  Sphere *spheres, int numSpheres);
 
-__global__ void renderScene(float aspectRatio,
+__global__ void renderScene(float aspectRatio, int width, int height,
                             Vector3f backgroundCol, Vector3f CameraRight,
                             Vector3f CameraUp, Vector3f CameraPos,
                             Vector3f CameraDirection, Pixel *pixels,

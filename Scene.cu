@@ -60,11 +60,12 @@ void renderStart(int width, int height,
 {
   cout << "Starting render" << endl;
    float aspectRatio = (float) width / height;
+   //int dim = ceil((double) width * height / TILE_WIDTH);
    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
    dim3 dimGrid(ceil((double) width / TILE_WIDTH),
                 ceil((double) height / TILE_WIDTH));
 
-   renderScene<<<dimGrid, dimBlock>>>(aspectRatio, 
+   renderScene<<<dimGrid, dimBlock>>>(aspectRatio, width, height,
                                       backgroundCol, CameraRight,
                                       CameraUp, CameraPos,
                                       CameraDirection, pixels,
@@ -208,7 +209,7 @@ __device__ Pixel ComputeLighting(Ray laser, hit_t hitResult,
 	return Pixel(color[0], color[1], color[2]);
 }
 
-__global__ void renderScene(float aspectRatio,
+__global__ void renderScene(float aspectRatio, int width, int height,
                             Vector3f backgroundCol, Vector3f CameraRight,
                             Vector3f CameraUp, Vector3f CameraPos,
                             Vector3f CameraDirection, Pixel *pixels,
@@ -219,7 +220,9 @@ __global__ void renderScene(float aspectRatio,
 {
    int row = blockIdx.y * blockDim.y + threadIdx.y;
    int col = blockIdx.x * blockDim.x + threadIdx.x;
-   printf("starting to render scene at (%d, %d)\n", row, col);
+   int pixelNum = row * width + col;
+   //printf("starting to render scene at (%d, %d)\n", row, col);
+   if(pixelNum < width * height) { 
 
    float normalized_i, normalized_j;
    if(aspectRatio > 1) {
@@ -245,18 +248,19 @@ __global__ void renderScene(float aspectRatio,
                              triangles, numTriangles,
                              spheres, numSpheres);
    
-   printf("actually hit shape\n");
+   //printf("actually hit shape\n");
    if (hitShape.isHit) {
-      pixels[col + row * gridDim.x] = ComputeLighting(laser, hitShape,
+      pixels[pixelNum] = ComputeLighting(laser, hitShape,
                                                   lights, numLights,
                                                   planes, numPlanes,
                                                   triangles, numTriangles,
                                                   spheres, numSpheres);
    } else {
       // not hit means we color it with a background color
-      pixels[col + row * gridDim.x] = Pixel(backgroundCol[0],
+      pixels[pixelNum] = Pixel(backgroundCol[0],
                                             backgroundCol[1],
                                             backgroundCol[2]);
+   }
    }
 }
 
