@@ -1,5 +1,6 @@
 #include <Pixel.hpp>
 
+__device__ __host__
 Pixel::Pixel()
 {
 	r = 0;
@@ -7,6 +8,7 @@ Pixel::Pixel()
 	b = 0;
 }
 
+__device__ __host__
 Pixel::Pixel(float iR, float iG, float iB)
 {
 	r = iR;
@@ -14,11 +16,13 @@ Pixel::Pixel(float iR, float iG, float iB)
 	b = iB;
 }
 
+__device__ __host__
 Pixel::~Pixel()
 {
 	
 }
 
+__device__ __host__
 void Pixel::Average(float newR, float newG, float newB)
 {
 	r += newR;
@@ -31,6 +35,7 @@ void Pixel::Average(float newR, float newG, float newB)
 	b = b/2.0f;
 }
 
+__device__ __host__
 void Pixel::AveragePx(Pixel other)
 {
 	r += other.r;
@@ -43,6 +48,7 @@ void Pixel::AveragePx(Pixel other)
 	b = b/2.0f;
 }
 
+__device__ __host__
 bool Pixel::HasColor() {
 	if (r <= .0001 && g <= .0001 && b <= .0001) {
 		return false;
