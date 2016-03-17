@@ -2,7 +2,7 @@
 
 using namespace std;
 
-constexpr float kEpsilon = 1e-8; 
+#define kEpsilon 1e-5
 
 Triangle::Triangle() {
    //SetMaterialByNum(rand() % NUM_MATS);
@@ -38,14 +38,17 @@ void Triangle::Initialize() {
    radius = magnitude(center);
    // offset the center properly in the world
    center += a;
+   normal.normalize();
+
+   #ifndef CULLING
+   isFlat = true;
+   #endif
 }
 
 Eigen::Vector3f Triangle::GetNormal(Eigen::Vector3f hitPt) {
    return normal;
 }
 
-// TODO! RETURN UV SO YOU CAN INTERPOLATE COLORS
-//  u * cols[0] + v * cols[1] + (1 - u - v) * cols[2];
 // http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
 float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
    double u, v, t;
@@ -82,23 +85,24 @@ float Triangle::checkHit(Eigen::Vector3f eye, Eigen::Vector3f dir) {
 
    Eigen::Vector3f ab = b - a;
    Eigen::Vector3f ac = c - a;
-   Eigen::Vector3f pvec = cross(dir, ac);
-   float det = dot(ab, pvec);
+   Eigen::Vector3f pvec = dir.cross(ac);
+   double det = dot(ab, pvec);
+
    #ifdef CULLING
    // if the determinant is negative the triangle is backfacing
    // if the determinant is close to 0, the ray misses the triangle
-   if (fabs(det) < kEpsilon) return 0;
+   if (det < kEpsilon) return 0;
    #else
    // ray and triangle are parallel if det is close to 0
-   if (det < kEpsilon) return 0;
+   if (fabs(det) < kEpsilon) return 0;
    #endif
-   float invDet = 1 / det;
+   double invDet = 1 / det;
 
    Eigen::Vector3f tvec = eye - a;
    u = dot(tvec, pvec) * invDet;
    if (u < 0 || u > 1) return 0;
 
-   Eigen::Vector3f qvec = cross(tvec, ab);
+   Eigen::Vector3f qvec = tvec.cross(ab);
    v = dot(dir, qvec) * invDet;
    if (v < 0 || u + v > 1) return 0;
 

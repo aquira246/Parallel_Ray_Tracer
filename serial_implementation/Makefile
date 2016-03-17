@@ -6,20 +6,6 @@ LIB=-DGL_GLEXT_PROTOTYPES -lglut -lGL -lGLU
 
 OBJECT = Image.o main.o Parse.o Picture.o Pixel.o Plane.o Ray.o Scene.o Sphere.o Shape.o Triangle.o Tokens.o VectorMath.o
 
-ifdef NOCUDA
-	CFLAGS += -D NOCUDA
-else
-	CFLAGS += -lcuda -lcudart
-endif
-
-ifdef NOMP
-	CFLAGS += -D NOMP
-endif
-
-ifdef NOPHI
-	CFLAGS += -D NOPHI
-endif
-
 ifdef DEBUG
 	CFLAGS += -D DEBUG
 endif

@@ -30,6 +30,9 @@ class Shape
         // No matter the shape we generate a bounding sphere
         Eigen::Vector3f center;
         float radius;
+        #ifndef CULLING
+        bool isFlat; // flat objects need to have 2 faces checked
+        #endif
 
         void SetMaterialToMat(Material newMat); 
         void SetMaterialByNum(int colorNum);

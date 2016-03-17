@@ -2,6 +2,10 @@
 #include "Sphere.hpp"
 #include "Triangle.hpp"
 
+#define PI 3.1415926
+#define H_PI 1.5707963
+#define D_EPSILON 0.001
+
 using namespace std;
 
 Scene::Scene() {
@@ -19,7 +23,7 @@ Scene::~Scene() {
 hit_t Scene::checkHit(Ray testRay) {
 	Shape* hitShape = NULL;
 	bool hit = false;
-	float bestT = 10000;
+	float bestT = 1000000;
 
 	for (unsigned int i = 0; i < planes.size(); ++i)
 	{
@@ -84,13 +88,13 @@ hit_t Scene::checkHit(Ray testRay) {
 hit_t Scene::checkHit(Ray testRay, Shape *exclude) {
 	Shape* hitShape = NULL;
 	bool hit = false;
-	float bestT = 10000;
+	float bestT = 1000000;
 
 	for (unsigned int i = 0; i < planes.size(); ++i)
 	{
       if(&(planes[i]) != exclude) {
 		   float t = planes[i].checkHit(testRay.eye, testRay.direction);
-		   if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
+		   if (t > 0 && t < bestT) {
 			   hitShape = &(planes[i]);
 			   bestT = t;
    			hit = true;
@@ -108,7 +112,7 @@ hit_t Scene::checkHit(Ray testRay, Shape *exclude) {
 	{
       if(&(triangles[i]) != exclude) {
    		float t = triangles[i].checkHit(testRay.eye, testRay.direction);
-	   	if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
+	   	if (t > 0 && t < bestT) {
 		   	hitShape = &(triangles[i]);
 			   bestT = t;
    			hit = true;
@@ -126,7 +130,7 @@ hit_t Scene::checkHit(Ray testRay, Shape *exclude) {
 	{
       if(&(spheres[i]) != exclude) {
    		float t = spheres[i].checkHit(testRay.eye, testRay.direction);
-	   	if (t > 0 && t < bestT) { //MERP idk if t > 0 is right
+	   	if (t > 0 && t < bestT) {
 		   	hitShape = &(spheres[i]);
 			   bestT = t;
    			hit = true;
@@ -153,20 +157,20 @@ hit_t Scene::checkHit(Ray testRay, Shape *exclude) {
 }
 
 Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
-	Eigen::Vector3f hitPt = laser.eye + laser.direction*hitResult.t;
+	Eigen::Vector3f hitPt = laser.eye + laser.direction * (hitResult.t - D_EPSILON);
 	Eigen::Vector3f viewVec = -laser.direction;
-	bool inShadow;
 	Eigen::Vector3f rgb = hitResult.hitShape->mat.rgb;
 	Eigen::Vector3f ambient = rgb*hitResult.hitShape->mat.ambient;
    Eigen::Vector3f n = hitResult.hitShape->GetNormal(hitPt);
 	Eigen::Vector3f color = Eigen::Vector3f(0,0,0);
+   bool inShadow;
 
 	// calculate if the point is in a shadow. If so, we later return the pixel as all black
 	for (int i = 0; i < lights.size(); ++i)
 	{
 		inShadow = false;
 		Eigen::Vector3f shadowDir = normalize(lights[i].location - hitPt);
-	   Eigen::Vector3f l = shadowDir;//normalize(lights[i].location - hitPt);
+	   Eigen::Vector3f l = shadowDir;
 		Ray shadowRay = Ray(hitPt, shadowDir);
 		hit_t shadowHit = checkHit(shadowRay, hitResult.hitShape);
 
@@ -176,15 +180,17 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 		}
 
       if (!inShadow) {
-         Eigen::Vector3f v = hitPt;
-         v = normalize(v);
+         #ifndef CULLING
+         if(hitResult.hitShape->isFlat && angle(n, l) > H_PI) {
+            n *= -1;
+         }
+         #endif
 
-         Eigen::Vector3f r = -l + 2 * dot(n,l) * n;
+         Eigen::Vector3f r = (2 * dot(n,l) * n) - l;
          r = normalize(r);
 
          float specMult = max(dot(viewVec, r), 0.0f);
-         specMult = pow(specMult, hitResult.hitShape->mat.shine); //should be shine
-         
+         specMult = min(pow(specMult, hitResult.hitShape->mat.shine), 1.0f);
          Eigen::Vector3f colorS = specMult * rgb;
 
 			float hold = min(max(dot(l, n), 0.0f), 1.0f);
@@ -197,7 +203,7 @@ Pixel Scene::ComputeLighting(Ray laser, hit_t hitResult, bool print) {
 			toAdd[1] *= lights[i].color.g;
 			toAdd[2] *= lights[i].color.b;
          //actually add spec + diffuse
-			color = color + toAdd;
+			color += toAdd;
 		}
       //ambient addition
 	   color[0] += ambient[0] * lights[i].color.r;

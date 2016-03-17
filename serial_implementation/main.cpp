@@ -46,15 +46,15 @@ float aspectRatio;
 void InitCamera() {
 	CameraPos = Eigen::Vector3f(0,0,10);
 	CameraDirection = normalize(Eigen::Vector3f(0,0,-1));
-	CameraRight = cross(CameraDirection, Up);
-	CameraUp = cross(CameraRight, CameraDirection);
+	CameraRight = normalize(cross(CameraDirection, Up));
+	CameraUp = normalize(cross(CameraRight, CameraDirection));
 }
 
 void InitCamera(Camera &camera) {
 	CameraPos = camera.position;
 	CameraDirection = normalize(camera.look_at - camera.position);
-	CameraRight = camera.right;
-	CameraUp = cross(CameraRight, CameraDirection);
+	CameraRight = normalize(camera.right);
+	CameraUp = normalize(cross(CameraRight, CameraDirection));
    #ifdef DEBUG
    cout << "Camera:\n" << "\tPOSITION: "
         << CameraPos[0] << ", " << CameraPos[1] << ", " << CameraPos[2] << endl
@@ -73,7 +73,7 @@ void loadScene()
 {
    pic = Picture(width, height);
    aspectRatio = (double) width / height;
-   backgroundCol = Eigen::Vector3f(0.5,0.5,0.5);
+   backgroundCol = Eigen::Vector3f(0,0,0);
    InitCamera(scene.camera);
 }
 
@@ -92,7 +92,7 @@ Ray ComputeCameraRay(int i, int j) {
 								normalized_j * CameraUp +
 								CameraPos + CameraDirection;
 
-   Eigen::Vector3f ray_direction = imagePoint - CameraPos;
+   Eigen::Vector3f ray_direction = normalize(imagePoint - CameraPos);
 
    return Ray(CameraPos, ray_direction);
 }
@@ -144,9 +144,15 @@ int main(int argc, char **argv)
    FILE* infile;
    scene = Scene();
  
-   if(argc < 2) {
+   if(argc != 2 && argc != 4) {
       cout << "Usage: rt <input_scene.pov>" << endl;
+      cout << "Usage: rt <input_scene.pov> <width> <height>" << endl;
       exit(EXIT_FAILURE);
+   }
+
+   if(argc == 4) {
+      width = std::stoi(argv[2]);
+      height = std::stoi(argv[3]);
    }
 
    infile = fopen(argv[1], "r");
